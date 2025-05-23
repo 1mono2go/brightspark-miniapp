@@ -1,4 +1,4 @@
-# brightspark-miniapp 
+# brightspark-miniapp  
 ⚡ BrightSpark AI
 Intelligent Workflow Automation Assistant
 

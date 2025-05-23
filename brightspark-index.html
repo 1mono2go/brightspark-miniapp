@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrightSpark AI</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--tg-theme-bg-color, #1a1a2e);
+            color: var(--tg-theme-text-color, #ffffff);
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0;
+            padding: 16px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #FFD700;
+            margin-bottom: 4px;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            color: #ffffff;
+        }
+
+        .welcome-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+
+        .user-greeting {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .description {
+            font-size: 14px;
+            line-height: 1.4;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #FF6B35, #F7931E);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .feature-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .feature-title {
+            font-size: 12px;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .status-bar {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 20px;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #4CAF50;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid #FFD700;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">⚡ BrightSpark AI</div>
+            <div class="subtitle">Intelligent Workflow Automation</div>
+        </div>
+
+        <div class="welcome-card">
+            <div class="user-greeting">Welcome to BrightSpark AI!</div>
+            <div class="description">
+                Your AI-powered automation assistant. Discover, analyze, and deploy n8n workflow templates with intelligent recommendations.
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="brightSpark.browseTemplates()">
+                    📚 Browse Templates
+                </button>
+                <button class="btn btn-secondary" onclick="brightSpark.analyzeWorkflow()">
+                    🔍 Analyze Workflow
+                </button>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card" onclick="brightSpark.showFeature('ai')">
+                    <div class="feature-icon">🤖</div>
+                    <div class="feature-title">AI Analysis</div>
+                </div>
+                <div class="feature-card" onclick="brightSpark.showFeature('templates')">
+                    <div class="feature-icon">📋</div>
+                    <div class="feature-title">Templates</div>
+                </div>
+                <div class="feature-card" onclick="brightSpark.showFeature('insights')">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">Insights</div>
+                </div>
+                <div class="feature-card" onclick="brightSpark.showFeature('deploy')">
+                    <div class="feature-icon">🚀</div>
+                    <div class="feature-title">Deploy</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div>Connecting to BrightSpark AI...</div>
+        </div>
+
+        <div class="status-bar">
+            <span class="status-indicator"></span>
+            <span id="status-text">Connected to BrightSpark AI Backend</span>
+        </div>
+    </div>
+
+    <script>
+        class BrightSparkAI {
+            constructor() {
+                this.tg = window.Telegram?.WebApp;
+                this.user = null;
+                this.backendConnected = false;
+                this.init();
+            }
+
+            async init() {
+                try {
+                    // Initialize Telegram Mini App
+                    if (this.tg) {
+                        this.tg.ready();
+                        this.tg.expand();
+                        this.tg.setHeaderColor('#667eea');
+                        this.user = this.tg.initDataUnsafe?.user;
+                        
+                        // Update greeting with user name
+                        if (this.user?.first_name) {
+                            document.querySelector('.user-greeting').textContent = 
+                                `Welcome, ${this.user.first_name}!`;
+                        }
+                    }
+
+                    // Connect to backend (your existing Spark AI system)
+                    await this.connectToBackend();
+                    
+                    console.log('🚀 BrightSpark AI initialized successfully');
+                } catch (error) {
+                    console.error('Initialization error:', error);
+                    this.updateStatus('Connection failed - using offline mode', false);
+                }
+            }
+
+            async connectToBackend() {
+                // This would connect to your existing Spark AI event bus
+                // For now, simulating connection
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        this.backendConnected = true;
+                        this.updateStatus('Connected to BrightSpark AI Backend', true);
+                        resolve();
+                    }, 1000);
+                });
+            }
+
+            updateStatus(message, connected) {
+                const statusText = document.getElementById('status-text');
+                const indicator = document.querySelector('.status-indicator');
+                
+                statusText.textContent = message;
+                indicator.style.background = connected ? '#4CAF50' : '#FF5722';
+            }
+
+            showLoading(show = true) {
+                const loading = document.getElementById('loading');
+                loading.style.display = show ? 'block' : 'none';
+            }
+
+            async browseTemplates() {
+                this.showLoading(true);
+                
+                try {
+                    // This would connect to your Template Intelligence Engine
+                    console.log('🔍 Browsing templates...');
+                    
+                    // Simulate API call
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
+                    this.showTemplateResults();
+                } catch (error) {
+                    console.error('Template browsing error:', error);
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            async analyzeWorkflow() {
+                this.showLoading(true);
+                
+                try {
+                    // This would connect to your Claude AI integration
+                    console.log('🤖 Analyzing workflow with AI...');
+                    
+                    // Simulate analysis
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    
+                    this.showAnalysisResults();
+                } catch (error) {
+                    console.error('Analysis error:', error);
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            showTemplateResults() {
+                // Simulate showing template results
+                if (this.tg) {
+                    this.tg.showAlert('Template Browser: Found 47 automation templates matching your needs!');
+                } else {
+                    alert('Template Browser: Found 47 automation templates!');
+                }
+            }
+
+            showAnalysisResults() {
+                // Simulate showing analysis results
+                if (this.tg) {
+                    this.tg.showAlert('AI Analysis: Your workflow has 85% efficiency score with 3 optimization suggestions.');
+                } else {
+                    alert('AI Analysis complete: 85% efficiency score!');
+                }
+            }
+
+            showFeature(feature) {
+                const features = {
+                    ai: 'AI Analysis: Get intelligent insights about your workflows',
+                    templates: 'Templates: Browse our library of 200+ automation templates',
+                    insights: 'Insights: View performance analytics and recommendations',
+                    deploy: 'Deploy: One-click deployment to your automation platform'
+                };
+
+                const message = features[feature] || 'Feature coming soon!';
+                
+                if (this.tg) {
+                    this.tg.showAlert(message);
+                } else {
+                    alert(message);
+                }
+            }
+        }
+
+        // Initialize BrightSpark AI
+        const brightSpark = new BrightSparkAI();
+
+        // Handle page visibility for performance
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && brightSpark.tg) {
+                brightSpark.tg.expand();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -14,7 +14,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--tg-theme-bg-color, #1a1a2e);
+            background: var(--tg-theme-bg-color, #2c3e50);
             color: var(--tg-theme-text-color, #ffffff);
             min-height: 100vh;
             padding: 0;
@@ -26,61 +26,113 @@
             margin: 0;
             padding: 16px;
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(255, 193, 7, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 193, 7, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 193, 7, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .tech-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            background-image: 
+                linear-gradient(90deg, transparent 49%, rgba(255, 193, 7, 0.3) 50%, transparent 51%),
+                linear-gradient(0deg, transparent 49%, rgba(255, 193, 7, 0.3) 50%, transparent 51%);
+            background-size: 20px 20px;
+            pointer-events: none;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 24px;
-            animation: fadeInDown 0.6s ease-out;
+            margin-bottom: 30px;
+            animation: fadeInDown 0.8s ease-out;
+            position: relative;
+            z-index: 2;
         }
 
         .logo {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
-            color: #FFD700;
-            margin-bottom: 4px;
-            text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+            margin-bottom: 8px;
+            text-shadow: 0 0 20px rgba(255, 193, 7, 0.5);
+        }
+
+        .logo .bright {
+            color: #ffffff;
+        }
+
+        .logo .spark {
+            color: #FFC107;
+        }
+
+        .logo .lightning {
+            color: #FFC107;
+            font-size: 36px;
+            margin: 0 8px;
+            display: inline-block;
+            animation: pulse 2s infinite;
         }
 
         .subtitle {
             font-size: 14px;
-            opacity: 0.9;
-            color: #ffffff;
+            opacity: 0.8;
+            color: #ecf0f1;
+            font-weight: 300;
         }
 
         .welcome-card {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(52, 73, 94, 0.8);
             backdrop-filter: blur(10px);
             border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            animation: fadeInUp 0.6s ease-out 0.2s both;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 193, 7, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+            position: relative;
+            z-index: 2;
         }
 
         .user-greeting {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             color: #ffffff;
         }
 
         .description {
             font-size: 14px;
-            line-height: 1.4;
+            line-height: 1.5;
             opacity: 0.9;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
+            color: #ecf0f1;
         }
 
         .action-buttons {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
         }
 
         .btn {
-            padding: 14px 20px;
+            padding: 16px 24px;
             border: none;
             border-radius: 12px;
             font-size: 16px;
@@ -90,126 +142,202 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             text-decoration: none;
             color: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
         }
 
         .btn-primary {
-            background: linear-gradient(45deg, #FF6B35, #F7931E);
-            color: white;
-            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+            background: linear-gradient(45deg, #FFC107, #FFD54F);
+            color: #2c3e50;
+            font-weight: 700;
+            box-shadow: 0 4px 20px rgba(255, 193, 7, 0.4);
+            border: 2px solid transparent;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+            box-shadow: 0 6px 25px rgba(255, 193, 7, 0.5);
         }
 
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(52, 73, 94, 0.6);
+            color: #ffffff;
+            border: 2px solid rgba(255, 193, 7, 0.5);
             backdrop-filter: blur(10px);
         }
 
         .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 193, 7, 0.1);
+            border-color: #FFC107;
             transform: translateY(-1px);
         }
 
         .features-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 20px;
+            gap: 14px;
+            margin-top: 24px;
         }
 
         .feature-card {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(44, 62, 80, 0.6);
             border-radius: 12px;
-            padding: 16px;
+            padding: 18px;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.2);
             transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 193, 7, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
         }
 
         .feature-card:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
+            background: rgba(52, 73, 94, 0.8);
+            border-color: #FFC107;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 193, 7, 0.2);
         }
 
         .feature-icon {
-            font-size: 24px;
-            margin-bottom: 8px;
+            font-size: 28px;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
         }
 
         .feature-title {
             font-size: 12px;
             font-weight: 600;
             opacity: 0.9;
+            color: #ecf0f1;
+            position: relative;
+            z-index: 1;
         }
 
         .status-bar {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-            padding: 12px;
-            margin-top: 20px;
+            background: rgba(44, 62, 80, 0.8);
+            border-radius: 10px;
+            padding: 14px;
+            margin-top: 24px;
             font-size: 12px;
-            opacity: 0.8;
+            opacity: 0.9;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            position: relative;
+            z-index: 2;
         }
 
         .status-indicator {
             display: inline-block;
-            width: 8px;
-            height: 8px;
-            background: #4CAF50;
+            width: 10px;
+            height: 10px;
+            background: #FFC107;
             border-radius: 50%;
-            margin-right: 8px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            margin-right: 10px;
+            animation: glow 2s infinite alternate;
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
         }
 
         .loading {
             display: none;
             text-align: center;
-            padding: 20px;
+            padding: 24px;
+            position: relative;
+            z-index: 2;
         }
 
         .spinner {
-            width: 32px;
-            height: 32px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-top: 3px solid #FFD700;
+            width: 36px;
+            height: 36px;
+            border: 3px solid rgba(255, 193, 7, 0.3);
+            border-top: 3px solid #FFC107;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 0 auto 12px;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 10px rgba(255, 193, 7, 0.5); }
+            100% { box-shadow: 0 0 20px rgba(255, 193, 7, 0.8); }
         }
 
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Responsive adjustments */
+        @media (max-width: 380px) {
+            .container {
+                padding: 12px;
+            }
+            
+            .logo {
+                font-size: 28px;
+            }
+            
+            .welcome-card {
+                padding: 20px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="tech-pattern"></div>
+        
         <div class="header">
-            <div class="logo">⚡ BrightSpark AI</div>
+            <div class="logo">
+                <span class="bright">BRIGHT</span><span class="lightning">⚡</span><span class="spark">SPARK</span>
+            </div>
             <div class="subtitle">Intelligent Workflow Automation</div>
         </div>
 
@@ -274,7 +402,7 @@
                     if (this.tg) {
                         this.tg.ready();
                         this.tg.expand();
-                        this.tg.setHeaderColor('#667eea');
+                        this.tg.setHeaderColor('#2c3e50');
                         this.user = this.tg.initDataUnsafe?.user;
                         
                         // Update greeting with user name
@@ -311,7 +439,10 @@
                 const indicator = document.querySelector('.status-indicator');
                 
                 statusText.textContent = message;
-                indicator.style.background = connected ? '#4CAF50' : '#FF5722';
+                indicator.style.background = connected ? '#FFC107' : '#e74c3c';
+                indicator.style.boxShadow = connected ? 
+                    '0 0 20px rgba(255, 193, 7, 0.8)' : 
+                    '0 0 20px rgba(231, 76, 60, 0.8)';
             }
 
             showLoading(show = true) {

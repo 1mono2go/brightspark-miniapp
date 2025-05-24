@@ -475,7 +475,11 @@
                         this.updateStatus('Connection error - check backend', false);
                     };
                     
-}
+                } catch (error) {
+                    console.error('❌ Backend connection failed:', error);
+                    this.updateStatus('Connection failed - backend not available', false);
+                }
+            }
 
             handleBackendMessage(message) {
                 switch (message.type) {
@@ -512,7 +516,7 @@
                         console.log('Unknown message type:', message.type);
                 }
             }
-                
+
             sendToBackend(message) {
                 if (this.websocket && this.websocket.readyState === WebSocket.OPEN) {
                     this.websocket.send(JSON.stringify(message));

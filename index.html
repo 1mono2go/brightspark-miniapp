@@ -554,6 +554,7 @@
                         break;
 
                     case 'workflow_analysis_completed':
+                    case 'workflow_analysis_result':
                         this.hideLoading();
                         this.showAnalysisResults(data);
                         this.updateStatus('✅ Claude AI analysis complete', true);

@@ -492,8 +492,19 @@
                         break;
                         
                     case 'workflow_analysis_response':
-                        this.showAnalysisResults(message.data);
-                        break;
+    this.showAnalysisResults(message.data);
+    break;
+    
+case 'workflow_analysis_chunk':
+    // Handle streaming chunks
+    console.log('📝 Analysis chunk received:', message.data);
+    break;
+    
+case 'workflow_analysis_complete':
+    // Handle completion
+    console.log('✅ Analysis complete!');
+    this.showAnalysisResults(message.data);
+    break;
                         
                     case 'error':
                         console.error('Backend error:', message.data);

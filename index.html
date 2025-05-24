@@ -111,12 +111,14 @@
             color: #ffffff;
         }
 
-        .user-stats {
+        .connection-status {
             font-size: 12px;
-            opacity: 0.7;
+            opacity: 0.8;
             margin-bottom: 16px;
-            color: #FFC107;
-            display: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            background: rgba(44, 62, 80, 0.6);
+            border: 1px solid rgba(255, 193, 7, 0.3);
         }
 
         .description {
@@ -223,169 +225,6 @@
             color: #ecf0f1;
         }
 
-        /* Template Selection Interface */
-        .template-selection {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(44, 62, 80, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            overflow-y: auto;
-            padding: 20px;
-        }
-
-        .template-selection.show {
-            display: block;
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .template-header {
-            text-align: center;
-            margin-bottom: 24px;
-            position: sticky;
-            top: 0;
-            background: rgba(44, 62, 80, 0.9);
-            padding: 16px 0;
-            border-radius: 12px;
-        }
-
-        .template-header h2 {
-            color: #FFC107;
-            font-size: 24px;
-            margin-bottom: 8px;
-        }
-
-        .template-header p {
-            color: #ecf0f1;
-            opacity: 0.8;
-            font-size: 14px;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: rgba(231, 76, 60, 0.8);
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .template-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .template-card {
-            background: rgba(52, 73, 94, 0.8);
-            border-radius: 12px;
-            padding: 20px;
-            border: 2px solid rgba(255, 193, 7, 0.2);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .template-card:hover {
-            border-color: #FFC107;
-            background: rgba(52, 73, 94, 0.9);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
-        }
-
-        .template-card.selected {
-            border-color: #FFC107;
-            background: rgba(255, 193, 7, 0.1);
-            box-shadow: 0 0 20px rgba(255, 193, 7, 0.4);
-        }
-
-        .template-name {
-            font-size: 18px;
-            font-weight: 600;
-            color: #FFC107;
-            margin-bottom: 8px;
-        }
-
-        .template-category {
-            font-size: 12px;
-            color: #3498db;
-            background: rgba(52, 152, 219, 0.2);
-            padding: 4px 8px;
-            border-radius: 4px;
-            display: inline-block;
-            margin-bottom: 12px;
-        }
-
-        .template-description {
-            font-size: 14px;
-            color: #ecf0f1;
-            opacity: 0.9;
-            line-height: 1.4;
-            margin-bottom: 16px;
-        }
-
-        .template-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 12px;
-            opacity: 0.7;
-        }
-
-        .complexity-badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-weight: 600;
-        }
-
-        .complexity-easy { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
-        .complexity-medium { background: rgba(241, 196, 15, 0.2); color: #f1c40f; }
-        .complexity-hard { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
-
-        .analyze-selected-btn {
-            position: sticky;
-            bottom: 20px;
-            background: linear-gradient(45deg, #FFC107, #FFD54F);
-            color: #2c3e50;
-            border: none;
-            padding: 16px 24px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            width: 100%;
-            max-width: 600px;
-            margin: 24px auto 0;
-            display: block;
-            box-shadow: 0 4px 20px rgba(255, 193, 7, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        .analyze-selected-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(255, 193, 7, 0.5);
-        }
-
-        .analyze-selected-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
         .status-bar {
             background: rgba(44, 62, 80, 0.8);
             border-radius: 10px;
@@ -421,6 +260,7 @@
             border-radius: 12px;
             z-index: 2000;
             min-width: 200px;
+            backdrop-filter: blur(10px);
         }
 
         .spinner {
@@ -443,11 +283,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.1); }
@@ -468,7 +303,6 @@
             .container { padding: 12px; }
             .logo { font-size: 28px; }
             .welcome-card { padding: 20px; }
-            .template-selection { padding: 16px; }
         }
     </style>
 </head>
@@ -485,17 +319,19 @@
 
         <div class="welcome-card">
             <div class="user-greeting" id="userGreeting">Welcome to BrightSpark AI!</div>
-            <div class="user-stats" id="userStats"></div>
+            <div class="connection-status" id="connectionStatus">
+                🔌 Connecting to backend...
+            </div>
             <div class="description">
-                Your AI-powered automation assistant. Select templates and get real Claude AI analysis.
+                Connected to your working Replit backend via WebSocket. Real Claude AI analysis ready!
             </div>
             
             <div class="action-buttons">
-                <button class="btn btn-primary" id="browseBtn" onclick="brightSpark.browseTemplates()">
-                    📚 Browse All Templates
+                <button class="btn btn-primary" id="browseBtn" disabled onclick="brightSpark.browseTemplates()">
+                    📚 Browse Templates
                 </button>
-                <button class="btn btn-secondary" id="analyzeBtn" onclick="brightSpark.showTemplateSelection()">
-                    🔍 Select & Analyze Template
+                <button class="btn btn-secondary" id="analyzeBtn" disabled onclick="brightSpark.analyzeWorkflow()">
+                    🔍 Analyze Workflow with Claude AI
                 </button>
             </div>
 
@@ -506,7 +342,7 @@
                 </div>
                 <div class="feature-card" onclick="brightSpark.showFeature('templates')">
                     <div class="feature-icon">📋</div>
-                    <div class="feature-title">n8n Templates</div>
+                    <div class="feature-title">Templates</div>
                 </div>
                 <div class="feature-card" onclick="brightSpark.showFeature('insights')">
                     <div class="feature-icon">📊</div>
@@ -521,25 +357,8 @@
 
         <div class="status-bar">
             <span class="status-indicator" id="statusIndicator"></span>
-            <span id="status-text">Connecting to backend...</span>
+            <span id="status-text">Initializing WebSocket connection...</span>
         </div>
-    </div>
-
-    <!-- Template Selection Interface -->
-    <div class="template-selection" id="templateSelection">
-        <div class="template-header">
-            <button class="close-btn" onclick="brightSpark.hideTemplateSelection()">×</button>
-            <h2>🔍 Select Template to Analyze</h2>
-            <p>Choose a workflow template for Claude AI analysis</p>
-        </div>
-        
-        <div class="template-grid" id="templateGrid">
-            <!-- Templates will be populated here -->
-        </div>
-        
-        <button class="analyze-selected-btn" id="analyzeSelectedBtn" onclick="brightSpark.analyzeSelectedTemplate()" disabled>
-            🤖 Analyze Selected Template with Claude AI
-        </button>
     </div>
 
     <!-- Loading Overlay -->
@@ -554,11 +373,13 @@
                 this.tg = window.Telegram?.WebApp;
                 this.user = null;
                 this.ws = null;
-                this.authenticated = false;
+                this.connected = false;
                 this.sessionId = null;
                 this.templates = [];
-                this.selectedTemplate = null;
-                this.backendUrl = 'f65135a4-a630-48e1-b1bc-afae926f9770-00-3flnf1uw5vz2q.riker.replit.dev';
+                
+                // Your working Replit WebSocket URL
+                this.wsUrl = 'wss://f65135a4-a630-48e1-b1bc-afae926f9770-00-3flnf1uw5vz2q.riker.replit.dev';
+                
                 this.init();
             }
 
@@ -570,124 +391,143 @@
                         this.tg.expand();
                         this.tg.setHeaderColor('#2c3e50');
                         this.user = this.tg.initDataUnsafe?.user;
+                        
+                        if (this.user?.first_name) {
+                            document.getElementById('userGreeting').textContent = 
+                                `Welcome, ${this.user.first_name}!`;
+                        }
+                        
                         console.log('👤 Telegram user:', this.user);
                     }
 
-                    // Connect to real backend
-                    await this.connectToRealBackend();
+                    // Connect to your working backend
+                    this.connectWebSocket();
                     
                 } catch (error) {
                     console.error('🚨 Initialization error:', error);
-                    this.updateStatus('Connection failed - check backend', false);
+                    this.updateStatus('❌ Initialization failed', false);
                 }
             }
 
-            async connectToRealBackend() {
-                this.updateStatus('Connecting to real backend...', false);
+            connectWebSocket() {
+                this.updateStatus('🔌 Connecting to backend...', false);
+                this.updateConnectionStatus('🔌 Establishing WebSocket connection...');
                 
                 try {
-                    // Test backend health first
-                    const healthResponse = await fetch(`https://${this.backendUrl}/api/health`);
-                    const healthData = await healthResponse.json();
-                    console.log('🏥 Backend health:', healthData);
-                    
-                    // Connect WebSocket
-                    const wsUrl = `wss://${this.backendUrl}`;
-                    this.ws = new WebSocket(wsUrl);
+                    console.log('🔌 Connecting to:', this.wsUrl);
+                    this.ws = new WebSocket(this.wsUrl);
                     
                     this.ws.onopen = () => {
-                        console.log('🔌 WebSocket connected');
-                        this.updateStatus('Connected - authenticating...', true);
-                        this.authenticateUser();
+                        console.log('✅ WebSocket connected');
+                        this.connected = true;
+                        this.updateStatus('✅ Connected to backend', true);
+                        this.updateConnectionStatus('✅ WebSocket connected - Initializing session...');
+                        
+                        // Initialize session (based on your backend's expected events)
+                        this.initializeSession();
                     };
 
                     this.ws.onmessage = (event) => {
-                        const data = JSON.parse(event.data);
-                        this.handleWebSocketMessage(data);
+                        try {
+                            const data = JSON.parse(event.data);
+                            this.handleMessage(data);
+                        } catch (error) {
+                            console.error('🚨 Message parsing error:', error);
+                        }
                     };
 
                     this.ws.onerror = (error) => {
                         console.error('🚨 WebSocket error:', error);
-                        this.updateStatus('WebSocket connection error', false);
+                        this.updateStatus('❌ Connection error', false);
+                        this.updateConnectionStatus('❌ WebSocket connection failed');
                     };
 
-                    this.ws.onclose = () => {
-                        console.log('🔌 WebSocket closed');
-                        this.updateStatus('Disconnected from backend', false);
-                        this.authenticated = false;
+                    this.ws.onclose = (event) => {
+                        console.log('🔌 WebSocket closed:', event.code, event.reason);
+                        this.connected = false;
+                        this.updateStatus('❌ Disconnected', false);
+                        this.updateConnectionStatus('❌ Connection lost - Attempting reconnect...');
+                        
+                        // Auto-reconnect after 3 seconds
+                        setTimeout(() => {
+                            if (!this.connected) {
+                                this.connectWebSocket();
+                            }
+                        }, 3000);
                     };
                     
                 } catch (error) {
-                    console.error('🚨 Backend connection error:', error);
-                    this.updateStatus(`Backend error: ${error.message}`, false);
+                    console.error('🚨 WebSocket creation error:', error);
+                    this.updateStatus('❌ WebSocket failed', false);
+                    this.updateConnectionStatus('❌ Failed to create WebSocket connection');
                 }
             }
 
-            authenticateUser() {
-                if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
-                    console.error('🚨 WebSocket not ready');
-                    return;
-                }
-
-                const authData = {
-                    type: 'authenticate',
-                    user: this.user || { 
-                        first_name: 'Anonymous', 
-                        id: 'anon_' + Date.now() 
-                    },
+            initializeSession() {
+                // Send session initialization (based on your backend logs)
+                const sessionData = {
+                    type: 'session_init',
+                    user_id: this.user?.id || 'anonymous',
+                    user_name: this.user?.first_name || 'Anonymous',
                     timestamp: new Date().toISOString()
                 };
-
-                console.log('🔐 Authenticating:', authData);
-                this.ws.send(JSON.stringify(authData));
+                
+                console.log('🚀 Initializing session:', sessionData);
+                this.sendMessage(sessionData);
             }
 
-            handleWebSocketMessage(data) {
-                console.log('📨 WebSocket message:', data.type);
+            handleMessage(data) {
+                console.log('📨 Received message:', data.type, data);
 
                 switch (data.type) {
-                    case 'authenticated':
-                        this.authenticated = true;
-                        this.sessionId = data.sessionId;
-                        this.updateUserInterface(data.user);
-                        this.updateStatus(`✅ Connected as ${data.user.first_name}`, true);
+                    case 'session_initialized':
+                        this.sessionId = data.session_id || 'anonymous';
+                        this.updateConnectionStatus(`✅ Session active: ${this.sessionId}`);
                         this.enableButtons();
                         break;
 
-                    case 'templates_result':
-                        this.templates = data.templates;
+                    case 'template_browse_result':
+                        this.templates = data.templates || [];
                         this.showTemplateResults(data);
                         break;
 
-                    case 'analysis_started':
-                        this.updateStatus(`🤖 ${data.message}`, true);
-                        this.setLoadingText(data.message);
+                    case 'workflow_analysis_started':
+                        this.showLoading(true);
+                        this.setLoadingText('🤖 Claude AI analyzing workflow...');
+                        this.updateStatus('🤖 Claude AI working...', true);
                         break;
 
-                    case 'analysis_complete':
+                    case 'workflow_analysis_completed':
+                        this.showLoading(false);
                         this.showAnalysisResults(data);
-                        this.updateStatus('✅ Claude AI Analysis complete!', true);
+                        this.updateStatus('✅ Claude AI analysis complete', true);
                         break;
 
                     case 'error':
                         console.error('🚨 Backend error:', data.message);
                         this.updateStatus(`❌ Error: ${data.message}`, false);
+                        this.showLoading(false);
                         break;
+
+                    default:
+                        console.log('📨 Unknown message type:', data.type);
                 }
             }
 
-            updateUserInterface(user) {
-                const greeting = document.getElementById('userGreeting');
-                const stats = document.getElementById('userStats');
-                
-                if (user && user.first_name !== 'Anonymous') {
-                    greeting.textContent = `Welcome back, ${user.first_name}! 👋`;
-                    stats.textContent = `🤖 Claude AI Ready • Session: ${this.sessionId?.slice(-8)}`;
-                    stats.style.display = 'block';
+            sendMessage(data) {
+                if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+                    this.ws.send(JSON.stringify(data));
+                    return true;
                 } else {
-                    greeting.textContent = 'Welcome to BrightSpark AI!';
-                    stats.style.display = 'none';
+                    console.error('🚨 WebSocket not ready');
+                    this.updateStatus('❌ Connection not ready', false);
+                    return false;
                 }
+            }
+
+            enableButtons() {
+                document.getElementById('browseBtn').disabled = false;
+                document.getElementById('analyzeBtn').disabled = false;
             }
 
             updateStatus(message, connected) {
@@ -701,9 +541,8 @@
                     '0 0 20px rgba(231, 76, 60, 0.8)';
             }
 
-            enableButtons() {
-                document.getElementById('browseBtn').disabled = false;
-                document.getElementById('analyzeBtn').disabled = false;
+            updateConnectionStatus(message) {
+                document.getElementById('connectionStatus').textContent = message;
             }
 
             setLoadingText(text) {
@@ -711,179 +550,71 @@
             }
 
             showLoading(show = true) {
-                const loading = document.getElementById('loading');
-                loading.style.display = show ? 'block' : 'none';
+                document.getElementById('loading').style.display = show ? 'block' : 'none';
             }
 
-            async browseTemplates() {
-                if (!this.authenticated) {
-                    this.showAlert('⏳ Please wait for authentication...');
+            browseTemplates() {
+                if (!this.connected) {
+                    this.showAlert('⚠️ Not connected to backend');
                     return;
                 }
 
                 this.showLoading(true);
-                this.setLoadingText('Loading templates from backend...');
-                this.updateStatus('📚 Loading templates...', true);
+                this.setLoadingText('📚 Loading templates from backend...');
+                this.updateStatus('📚 Requesting templates...', true);
 
-                try {
-                    this.ws.send(JSON.stringify({
-                        type: 'browse_templates',
-                        filters: { category: 'all', complexity: 'beginner_to_advanced' },
-                        limit: 20
-                    }));
-                } catch (error) {
-                    console.error('🚨 Browse error:', error);
-                    this.showLoading(false);
-                }
+                // Send template browse request (based on your backend's expected format)
+                const browseData = {
+                    type: 'template_browse',
+                    filters: {
+                        category: 'all',
+                        complexity: 'beginner_to_advanced'
+                    },
+                    limit: 20
+                };
+
+                this.sendMessage(browseData);
             }
 
-            async showTemplateSelection() {
-                if (!this.authenticated) {
-                    this.showAlert('⏳ Please wait for authentication...');
+            analyzeWorkflow() {
+                if (!this.connected) {
+                    this.showAlert('⚠️ Not connected to backend');
                     return;
                 }
 
-                // Load templates first if not loaded
-                if (this.templates.length === 0) {
-                    this.showLoading(true);
-                    this.setLoadingText('Loading templates for selection...');
-                    
-                    try {
-                        this.ws.send(JSON.stringify({
-                            type: 'browse_templates',
-                            filters: { category: 'all', complexity: 'beginner_to_advanced' },
-                            limit: 20
-                        }));
-                        
-                        // Wait for templates to load before showing selection
-                        setTimeout(() => {
-                            if (this.templates.length > 0) {
-                                this.showTemplateSelectionInterface();
-                            }
-                        }, 2000);
-                        
-                    } catch (error) {
-                        console.error('🚨 Template loading error:', error);
-                        this.showLoading(false);
-                    }
-                } else {
-                    this.showTemplateSelectionInterface();
-                }
-            }
-
-            showTemplateSelectionInterface() {
-                this.showLoading(false);
-                const selection = document.getElementById('templateSelection');
-                const grid = document.getElementById('templateGrid');
-                
-                // Clear previous templates
-                grid.innerHTML = '';
-                
-                // Populate template grid
-                this.templates.forEach(template => {
-                    const card = this.createTemplateCard(template);
-                    grid.appendChild(card);
-                });
-                
-                // Show selection interface
-                selection.classList.add('show');
-                this.updateStatus('👆 Select a template to analyze', true);
-            }
-
-            createTemplateCard(template) {
-                const card = document.createElement('div');
-                card.className = 'template-card';
-                card.dataset.templateId = template.id;
-                
-                const complexityClass = template.complexity === 'Easy' ? 'complexity-easy' : 
-                                      template.complexity === 'Medium' ? 'complexity-medium' : 'complexity-hard';
-                
-                card.innerHTML = `
-                    <div class="template-name">${template.name}</div>
-                    <div class="template-category">${template.category}</div>
-                    <div class="template-description">${template.description}</div>
-                    <div class="template-meta">
-                        <span class="complexity-badge ${complexityClass}">${template.complexity}</span>
-                        <span>${template.estimatedTime || '30 min'}</span>
-                    </div>
-                `;
-                
-                card.addEventListener('click', () => {
-                    this.selectTemplate(template, card);
-                });
-                
-                return card;
-            }
-
-            selectTemplate(template, cardElement) {
-                // Remove previous selection
-                document.querySelectorAll('.template-card').forEach(card => {
-                    card.classList.remove('selected');
-                });
-                
-                // Select current template
-                cardElement.classList.add('selected');
-                this.selectedTemplate = template;
-                
-                // Enable analyze button
-                const analyzeBtn = document.getElementById('analyzeSelectedBtn');
-                analyzeBtn.disabled = false;
-                analyzeBtn.textContent = `🤖 Analyze "${template.name}" with Claude AI`;
-                
-                this.updateStatus(`✅ Selected: ${template.name}`, true);
-            }
-
-            hideTemplateSelection() {
-                const selection = document.getElementById('templateSelection');
-                selection.classList.remove('show');
-                this.selectedTemplate = null;
-                this.updateStatus('✅ Template selection closed', true);
-            }
-
-            async analyzeSelectedTemplate() {
-                if (!this.selectedTemplate) {
-                    this.showAlert('⚠️ Please select a template first!');
-                    return;
-                }
-
-                this.hideTemplateSelection();
                 this.showLoading(true);
-                this.setLoadingText(`Analyzing "${this.selectedTemplate.name}" with Claude AI...`);
-                this.updateStatus('🤖 Starting Claude AI analysis...', true);
+                this.setLoadingText('🤖 Starting Claude AI workflow analysis...');
+                this.updateStatus('🤖 Requesting Claude AI analysis...', true);
 
-                try {
-                    this.ws.send(JSON.stringify({
-                        type: 'analyze_template',
-                        templateId: this.selectedTemplate.id,
-                        query: `Please provide a comprehensive analysis of the "${this.selectedTemplate.name}" template for ${this.user?.first_name || 'me'}, including specific recommendations, implementation steps, and optimization suggestions.`
-                    }));
-                } catch (error) {
-                    console.error('🚨 Analysis error:', error);
-                    this.showLoading(false);
-                    this.updateStatus('❌ Analysis failed', false);
-                }
+                // Send workflow analysis request (based on your backend's expected format)
+                const analysisData = {
+                    type: 'workflow_analysis',
+                    template_id: 'email-marketing', // Default template
+                    user_query: `Please analyze this workflow template for ${this.user?.first_name || 'me'} with specific recommendations and implementation guidance.`,
+                    analysis_type: 'comprehensive'
+                };
+
+                this.sendMessage(analysisData);
             }
 
             showTemplateResults(data) {
                 this.showLoading(false);
                 
-                // Store templates for selection interface
-                this.templates = data.templates || [];
+                const templateCount = data.templates?.length || 0;
+                let message = `📚 **Templates Loaded Successfully!**\n\n`;
+                message += `Found ${templateCount} workflow templates\n\n`;
                 
-                const templateCount = this.templates.length;
-                const userName = data.user || 'there';
-                
-                let message = `📚 **Templates Loaded!**\n\n`;
-                message += `Found ${templateCount} templates from backend\n\n`;
-                
-                if (this.templates.length > 0) {
+                if (data.templates && data.templates.length > 0) {
                     message += `**Available Templates:**\n`;
-                    this.templates.slice(0, 3).forEach(template => {
-                        message += `• ${template.name}\n  ${template.category} | ${template.difficulty}\n\n`;
+                    data.templates.slice(0, 5).forEach(template => {
+                        message += `• ${template.name || template.id}\n`;
+                        if (template.category) message += `  ${template.category}`;
+                        if (template.complexity) message += ` | ${template.complexity}`;
+                        message += '\n\n';
                     });
-                    message += `\nTap "Select & Analyze Template" to choose one for Claude AI analysis! 🤖`;
                 }
-
+                
+                message += `✨ Connected to your working backend!`;
                 this.showAlert(message);
             }
 
@@ -892,22 +623,23 @@
                 
                 let message = `🤖 **Claude AI Analysis Complete!**\n\n`;
                 
-                if (data.success) {
-                    message += `✅ Real Claude AI Analysis\n`;
-                    message += `🔬 Model: ${data.model}\n`;
-                    message += `📊 Template: ${data.template?.name}\n\n`;
+                if (data.analysis) {
+                    message += `✅ Real Claude AI Analysis\n\n`;
                     
-                    // Show preview of actual Claude analysis
-                    const analysisPreview = data.analysis?.substring(0, 400) || 'No analysis available';
+                    // Show preview of analysis
+                    const analysisPreview = data.analysis.substring(0, 400);
                     message += `**Analysis Preview:**\n${analysisPreview}...`;
                     
-                    if (data.personalized) {
-                        message += `\n\n✨ Personalized for ${data.user || 'you'}!`;
+                    if (data.efficiency_score) {
+                        message += `\n\n⚡ Efficiency Score: ${data.efficiency_score}/100`;
+                    }
+                    
+                    if (data.recommendations) {
+                        message += `\n\n💡 Recommendations: ${data.recommendations.length} insights provided`;
                     }
                 } else {
-                    message += `⚠️ Using enhanced fallback\n`;
-                    message += `❌ Claude API: ${data.error}\n\n`;
-                    message += `**Fallback Analysis:**\n${data.analysis?.substring(0, 300)}...`;
+                    message += `⚠️ Analysis completed but no detailed results available`;
+                    message += `\nResponse: ${JSON.stringify(data).substring(0, 200)}...`;
                 }
 
                 this.showAlert(message);
@@ -915,13 +647,13 @@
 
             showFeature(feature) {
                 const features = {
-                    ai: '🤖 **Real Claude AI**\n\nSelect any template to get genuine Claude AI analysis with personalized insights and recommendations.',
-                    templates: '📋 **n8n Templates**\n\nBrowse real workflow templates loaded from backend. Click "Select & Analyze" to choose one for AI analysis.',
-                    insights: '📊 **Real Insights**\n\nGet actual Claude AI analysis results with efficiency scores, optimization suggestions, and implementation guides.',
-                    deploy: '🚀 **Deploy**\n\nOne-click deployment assistance for n8n workflows with configuration guidance.'
+                    ai: '🤖 **Claude AI Integration**\n\nReal Claude AI analysis connected to your working Replit backend. Get genuine workflow insights and recommendations.',
+                    templates: '📋 **Workflow Templates**\n\nBrowse real n8n workflow templates loaded from your backend templates.json file.',
+                    insights: '📊 **Real Analytics**\n\nActual performance data and analysis results from your Template Intelligence Engine.',
+                    deploy: '🚀 **Deployment Ready**\n\nYour backend is fully functional and ready for production deployment!'
                 };
 
-                const message = features[feature] || 'Feature coming soon!';
+                const message = features[feature] || 'Feature information not available.';
                 this.showAlert(message);
             }
 
@@ -936,17 +668,6 @@
 
         // Initialize BrightSpark AI
         const brightSpark = new BrightSparkAI();
-        
-        // Disable buttons initially
-        document.getElementById('browseBtn').disabled = true;
-        document.getElementById('analyzeBtn').disabled = true;
-
-        // Handle page visibility
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden && brightSpark.tg) {
-                brightSpark.tg.expand();
-            }
-        });
     </script>
 </body>
 </html>

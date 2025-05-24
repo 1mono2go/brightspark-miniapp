@@ -475,11 +475,7 @@
                         this.updateStatus('Connection error - check backend', false);
                     };
                     
-                } catch (error) {
-                    console.error('❌ Backend connection failed:', error);
-                    this.updateStatus('Connection failed - backend not available', false);
-                }
-            }
+}
 
             handleBackendMessage(message) {
                 switch (message.type) {
@@ -492,19 +488,20 @@
                         break;
                         
                     case 'workflow_analysis_response':
-    this.showAnalysisResults(message.data);
-    break;
-    
-case 'workflow_analysis_chunk':
-    // Handle streaming chunks
-    console.log('📝 Analysis chunk received:', message.data);
-    break;
-    
-case 'workflow_analysis_complete':
-    // Handle completion
-    console.log('✅ Analysis complete!');
-    this.showAnalysisResults(message.data);
-    break;
+                        this.showAnalysisResults(message.data);
+                        break;
+                        
+                    case 'workflow_analysis_chunk':
+                        // Handle streaming chunks
+                        console.log('📝 Analysis chunk received:', message.data);
+                        break;
+                        
+                    case 'workflow_analysis_complete':
+                        // Handle completion
+                        console.log('✅ Analysis complete!');
+                        console.log('🔍 Raw analysis data:', JSON.stringify(message.data, null, 2));
+                        this.showAnalysisResults(message.data);
+                        break;
                         
                     case 'error':
                         console.error('Backend error:', message.data);
@@ -515,7 +512,7 @@ case 'workflow_analysis_complete':
                         console.log('Unknown message type:', message.type);
                 }
             }
-
+                
             sendToBackend(message) {
                 if (this.websocket && this.websocket.readyState === WebSocket.OPEN) {
                     this.websocket.send(JSON.stringify(message));

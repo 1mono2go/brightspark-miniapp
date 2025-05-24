@@ -91,7 +91,7 @@
             font-weight: 300;
         }
 
-        .welcome-card {
+        .welcome-card, .template-selection-card, .analysis-results-card {
             background: rgba(52, 73, 94, 0.8);
             backdrop-filter: blur(10px);
             border-radius: 16px;
@@ -104,11 +104,25 @@
             z-index: 2;
         }
 
+        .template-selection-card, .analysis-results-card {
+            display: none;
+        }
+
         .user-greeting {
             font-size: 20px;
             font-weight: 600;
             margin-bottom: 12px;
             color: #ffffff;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .connection-status {
@@ -181,10 +195,114 @@
             border: 2px solid rgba(255, 193, 7, 0.5);
         }
 
+        .btn-tertiary {
+            background: rgba(44, 62, 80, 0.8);
+            color: #ecf0f1;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            font-size: 14px;
+            padding: 12px 20px;
+        }
+
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none !important;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+
+        .template-list {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .template-item {
+            background: rgba(44, 62, 80, 0.6);
+            border: 2px solid rgba(255, 193, 7, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .template-item:hover {
+            border-color: #FFC107;
+            background: rgba(52, 73, 94, 0.8);
+            transform: translateY(-2px);
+        }
+
+        .template-item.selected {
+            border-color: #FFC107;
+            background: rgba(255, 193, 7, 0.1);
+        }
+
+        .template-name {
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+
+        .template-description {
+            font-size: 12px;
+            opacity: 0.8;
+            color: #ecf0f1;
+        }
+
+        .template-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 11px;
+            opacity: 0.7;
+        }
+
+        .analysis-content {
+            background: rgba(44, 62, 80, 0.4);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            font-size: 14px;
+            line-height: 1.6;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .analysis-section {
+            margin-bottom: 16px;
+        }
+
+        .analysis-section h4 {
+            color: #FFC107;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .efficiency-score {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: rgba(255, 193, 7, 0.1);
+            border-radius: 8px;
+            margin: 12px 0;
+        }
+
+        .score-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: conic-gradient(#FFC107 var(--percentage), rgba(255, 193, 7, 0.2) 0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
         }
 
         .features-grid {
@@ -273,6 +391,41 @@
             margin: 0 auto 16px;
         }
 
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #FFC107;
+            cursor: pointer;
+            margin-bottom: 16px;
+            font-size: 14px;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .back-btn:hover {
+            opacity: 1;
+        }
+
+        .external-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #FFC107;
+            text-decoration: none;
+            font-size: 12px;
+            margin-top: 12px;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .external-link:hover {
+            background: rgba(255, 193, 7, 0.1);
+            border-color: #FFC107;
+        }
+
         @keyframes fadeInDown {
             from { opacity: 0; transform: translateY(-30px); }
             to { opacity: 1; transform: translateY(0); }
@@ -302,7 +455,7 @@
         @media (max-width: 380px) {
             .container { padding: 12px; }
             .logo { font-size: 28px; }
-            .welcome-card { padding: 20px; }
+            .welcome-card, .template-selection-card, .analysis-results-card { padding: 20px; }
         }
     </style>
 </head>
@@ -317,7 +470,8 @@
             <div class="subtitle">Intelligent Workflow Automation</div>
         </div>
 
-        <div class="welcome-card">
+        <!-- Main Welcome Card -->
+        <div class="welcome-card" id="welcomeCard">
             <div class="user-greeting" id="userGreeting">Welcome to BrightSpark AI!</div>
             <div class="connection-status" id="connectionStatus">
                 🔌 Connecting to backend...
@@ -330,8 +484,8 @@
                 <button class="btn btn-primary" id="browseBtn" disabled onclick="brightSpark.browseTemplates()">
                     📚 Browse Templates
                 </button>
-                <button class="btn btn-secondary" id="analyzeBtn" disabled onclick="brightSpark.analyzeWorkflow()">
-                    🔍 Analyze Workflow with Claude AI
+                <button class="btn btn-secondary" id="quickAnalyzeBtn" disabled onclick="brightSpark.quickAnalyzeWorkflow()">
+                    🔍 Quick Analyze (Random Template)
                 </button>
             </div>
 
@@ -352,6 +506,66 @@
                     <div class="feature-icon">🚀</div>
                     <div class="feature-title">Deploy</div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Template Selection Card -->
+        <div class="template-selection-card" id="templateSelectionCard">
+            <div class="back-btn" onclick="brightSpark.showWelcome()">
+                ← Back to Home
+            </div>
+            <div class="card-title">
+                📚 Choose a Template to Analyze
+            </div>
+            <div class="description">
+                Select a workflow template for detailed Claude AI analysis:
+            </div>
+            
+            <div class="template-list" id="templateList">
+                <!-- Templates will be loaded here -->
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="analyzeSelectedBtn" disabled onclick="brightSpark.analyzeSelectedTemplate()">
+                    🤖 Analyze Selected Template
+                </button>
+                <button class="btn btn-tertiary" onclick="brightSpark.showWelcome()">
+                    Cancel
+                </button>
+            </div>
+        </div>
+
+        <!-- Analysis Results Card -->
+        <div class="analysis-results-card" id="analysisResultsCard">
+            <div class="back-btn" onclick="brightSpark.showTemplateSelection()">
+                ← Back to Templates
+            </div>
+            <div class="card-title" id="analysisTitle">
+                🤖 Claude AI Analysis Results
+            </div>
+            
+            <div id="analysisScoreSection" class="efficiency-score" style="display: none;">
+                <div class="score-circle" id="scoreCircle">0</div>
+                <div>
+                    <div style="font-weight: 600;">Efficiency Score</div>
+                    <div style="font-size: 12px; opacity: 0.8;">Based on Claude AI analysis</div>
+                </div>
+            </div>
+
+            <div class="analysis-content" id="analysisContent">
+                Analysis results will appear here...
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="brightSpark.shareAnalysis()">
+                    📤 Share Analysis
+                </button>
+                <a class="external-link" id="fullAnalysisLink" href="#" target="_blank" style="display: none;">
+                    📄 View Full Analysis Report →
+                </a>
+                <button class="btn btn-tertiary" onclick="brightSpark.showTemplateSelection()">
+                    Analyze Another Template
+                </button>
             </div>
         </div>
 
@@ -376,8 +590,10 @@
                 this.connected = false;
                 this.sessionId = null;
                 this.templates = [];
+                this.selectedTemplate = null;
+                this.currentAnalysis = null;
                 
-                // WORKING Replit URLs - Confirmed operational!
+                // Working Replit URLs
                 this.apiUrl = 'https://f65135a4-a630-48e1-b1bc-afae926f9770-00-3flnf1uw5vz2q.riker.replit.dev';
                 this.wsUrl = 'wss://f65135a4-a630-48e1-b1bc-afae926f9770-00-3flnf1uw5vz2q.riker.replit.dev/ws';
                 
@@ -418,9 +634,8 @@
                     this.updateStatus('🏥 Testing backend health...', false);
                     console.log('🔍 Testing backend URL:', this.apiUrl);
                     
-                    // Add timeout and better error handling
                     const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+                    const timeoutId = setTimeout(() => controller.abort(), 10000);
                     
                     const response = await fetch(`${this.apiUrl}/api/health`, {
                         method: 'GET',
@@ -433,7 +648,6 @@
                     clearTimeout(timeoutId);
                     
                     console.log('📡 Response status:', response.status);
-                    console.log('📡 Response headers:', [...response.headers.entries()]);
                     
                     if (!response.ok) {
                         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -448,10 +662,7 @@
                     
                 } catch (error) {
                     console.error('🚨 Health check failed:', error);
-                    console.error('🚨 Error name:', error.name);
-                    console.error('🚨 Error message:', error.message);
                     
-                    // More specific error handling
                     if (error.name === 'AbortError') {
                         this.updateConnectionStatus('❌ Backend request timeout (10s)');
                     } else if (error.message.includes('fetch')) {
@@ -478,7 +689,6 @@
                         this.updateStatus('✅ Connected to backend', true);
                         this.updateConnectionStatus('✅ WebSocket connected - Initializing session...');
                         
-                        // Initialize session
                         this.initializeSession();
                     };
 
@@ -503,7 +713,6 @@
                         this.updateStatus('❌ Disconnected', false);
                         this.updateConnectionStatus('❌ Connection lost - Attempting reconnect...');
                         
-                        // Auto-reconnect after 3 seconds
                         setTimeout(() => {
                             if (!this.connected) {
                                 this.connectWebSocket();
@@ -532,7 +741,6 @@
 
             handleMessage(data) {
                 console.log('📨 Received message:', data.type, data);
-                console.log('📨 Full message data:', JSON.stringify(data, null, 2));
 
                 switch (data.type) {
                     case 'session_initialized':
@@ -543,7 +751,7 @@
 
                     case 'template_browse_result':
                         this.templates = data.templates || [];
-                        this.showTemplateResults(data);
+                        this.displayTemplateList();
                         this.hideLoading();
                         break;
 
@@ -554,14 +762,13 @@
                         break;
 
                     case 'workflow_analysis_completed':
-                    case 'workflow_analysis_result':
                         this.hideLoading();
-                        this.showAnalysisResults(data);
+                        this.currentAnalysis = data;
+                        this.displayAnalysisResults(data);
                         this.updateStatus('✅ Claude AI analysis complete', true);
                         break;
 
                     case 'workflow_analysis_streaming':
-                        // Handle streaming response
                         this.setLoadingText(`🤖 Claude AI: ${data.chunk?.substring(0, 50)}...`);
                         break;
 
@@ -576,12 +783,8 @@
                         break;
 
                     case 'error':
-                        console.error('🚨 Backend error object:', data);
-                        console.error('🚨 Error message:', data.message);
-                        console.error('🚨 Error details:', data.error);
-                        console.error('🚨 Full error data:', JSON.stringify(data, null, 2));
+                        console.error('🚨 Backend error:', data);
                         
-                        // Handle different error message formats
                         let errorMessage = 'Unknown error';
                         if (data.message) {
                             errorMessage = data.message;
@@ -589,10 +792,6 @@
                             errorMessage = data.error;
                         } else if (data.details) {
                             errorMessage = data.details;
-                        } else if (data.data && data.data.message) {
-                            errorMessage = data.data.message;  // Handle nested error messages
-                        } else {
-                            errorMessage = 'Backend error (no details provided)';
                         }
                         
                         this.updateStatus(`❌ Error: ${errorMessage}`, false);
@@ -607,7 +806,6 @@
             sendMessage(data) {
                 if (this.ws && this.ws.readyState === WebSocket.OPEN) {
                     console.log('📤 Sending message:', data.type, data);
-                    console.log('📤 Full message data:', JSON.stringify(data, null, 2));
                     this.ws.send(JSON.stringify(data));
                     return true;
                 } else {
@@ -619,7 +817,250 @@
 
             enableButtons() {
                 document.getElementById('browseBtn').disabled = false;
-                document.getElementById('analyzeBtn').disabled = false;
+                document.getElementById('quickAnalyzeBtn').disabled = false;
+            }
+
+            // UI Navigation Methods
+            showWelcome() {
+                document.getElementById('welcomeCard').style.display = 'block';
+                document.getElementById('templateSelectionCard').style.display = 'none';
+                document.getElementById('analysisResultsCard').style.display = 'none';
+            }
+
+            showTemplateSelection() {
+                document.getElementById('welcomeCard').style.display = 'none';
+                document.getElementById('templateSelectionCard').style.display = 'block';
+                document.getElementById('analysisResultsCard').style.display = 'none';
+            }
+
+            showAnalysisResults() {
+                document.getElementById('welcomeCard').style.display = 'none';
+                document.getElementById('templateSelectionCard').style.display = 'none';
+                document.getElementById('analysisResultsCard').style.display = 'block';
+            }
+
+            // Template Management
+            async browseTemplates() {
+                if (!this.connected) {
+                    this.showAlert('⚠️ Not connected to backend');
+                    return;
+                }
+
+                this.showLoading(true);
+                this.setLoadingText('📚 Loading templates from backend...');
+                this.updateStatus('📚 Requesting templates...', true);
+
+                const browseData = {
+                    type: 'template_browse',
+                    filters: {
+                        category: 'all',
+                        complexity: 'beginner_to_advanced'
+                    },
+                    limit: 20
+                };
+
+                this.sendMessage(browseData);
+            }
+
+            displayTemplateList() {
+                const templateList = document.getElementById('templateList');
+                templateList.innerHTML = '';
+
+                if (this.templates.length === 0) {
+                    templateList.innerHTML = '<div style="text-align: center; padding: 20px; opacity: 0.7;">No templates available</div>';
+                    return;
+                }
+
+                this.templates.forEach((template, index) => {
+                    const templateItem = document.createElement('div');
+                    templateItem.className = 'template-item';
+                    templateItem.onclick = () => this.selectTemplate(template, templateItem);
+                    
+                    templateItem.innerHTML = `
+                        <div class="template-name">${template.name || `Template ${template.id}`}</div>
+                        <div class="template-description">${template.description || 'No description available'}</div>
+                        <div class="template-meta">
+                            <span>Category: ${template.category || 'General'}</span>
+                            <span>Complexity: ${template.complexity || 'Medium'}</span>
+                        </div>
+                    `;
+
+                    templateList.appendChild(templateItem);
+                });
+
+                this.showTemplateSelection();
+            }
+
+            selectTemplate(template, element) {
+                // Remove previous selection
+                document.querySelectorAll('.template-item').forEach(item => {
+                    item.classList.remove('selected');
+                });
+
+                // Select new template
+                element.classList.add('selected');
+                this.selectedTemplate = template;
+                
+                // Enable analyze button
+                document.getElementById('analyzeSelectedBtn').disabled = false;
+                
+                console.log('✅ Template selected:', template);
+            }
+
+            async analyzeSelectedTemplate() {
+                if (!this.selectedTemplate) {
+                    this.showAlert('⚠️ Please select a template first');
+                    return;
+                }
+
+                if (!this.connected) {
+                    this.showAlert('⚠️ Not connected to backend');
+                    return;
+                }
+
+                this.showLoading(true);
+                this.setLoadingText('🤖 Starting Claude AI workflow analysis...');
+                this.updateStatus('🤖 Requesting Claude AI analysis...', true);
+
+                const analysisData = {
+                    type: 'workflow_analysis',
+                    template_id: this.selectedTemplate.id,
+                    user_query: `Please analyze the "${this.selectedTemplate.name}" workflow template for ${this.user?.first_name || 'me'} with specific recommendations, efficiency score, and implementation guidance.`,
+                    analysis_type: 'comprehensive'
+                };
+
+                this.sendMessage(analysisData);
+            }
+
+            async quickAnalyzeWorkflow() {
+                if (!this.connected) {
+                    this.showAlert('⚠️ Not connected to backend');
+                    return;
+                }
+
+                this.showLoading(true);
+                this.setLoadingText('🤖 Starting Claude AI quick analysis...');
+                this.updateStatus('🤖 Requesting Claude AI analysis...', true);
+
+                const analysisData = {
+                    type: 'workflow_analysis',
+                    template_id: 1, // Default template for quick analysis
+                    user_query: `Please provide a quick analysis of this workflow template for ${this.user?.first_name || 'me'} with key insights and recommendations.`,
+                    analysis_type: 'quick'
+                };
+
+                this.sendMessage(analysisData);
+            }
+
+            displayAnalysisResults(data) {
+                const analysisTitle = document.getElementById('analysisTitle');
+                const analysisContent = document.getElementById('analysisContent');
+                const scoreSection = document.getElementById('analysisScoreSection');
+                const scoreCircle = document.getElementById('scoreCircle');
+                
+                // Update title
+                const templateName = this.selectedTemplate?.name || 'Workflow';
+                analysisTitle.innerHTML = `🤖 Analysis: ${templateName}`;
+
+                // Display efficiency score if available
+                if (data.efficiency_score) {
+                    const score = parseInt(data.efficiency_score);
+                    scoreCircle.textContent = score;
+                    scoreCircle.style.setProperty('--percentage', `${score * 3.6}deg`);
+                    scoreSection.style.display = 'flex';
+                }
+
+                // Format and display analysis content
+                let content = '';
+                
+                if (data.analysis) {
+                    // Split analysis into sections for better readability
+                    const analysisText = data.analysis;
+                    const sections = this.parseAnalysisIntoSections(analysisText);
+                    
+                    sections.forEach(section => {
+                        content += `<div class="analysis-section">
+                            <h4>${section.title}</h4>
+                            <div>${section.content}</div>
+                        </div>`;
+                    });
+                } else {
+                    content = `<div class="analysis-section">
+                        <h4>Analysis Results</h4>
+                        <div>${JSON.stringify(data, null, 2)}</div>
+                    </div>`;
+                }
+
+                analysisContent.innerHTML = content;
+
+                // Generate full analysis link
+                this.generateFullAnalysisLink(data);
+
+                // Show analysis results
+                this.showAnalysisResults();
+            }
+
+            parseAnalysisIntoSections(analysisText) {
+                // Simple parsing to create sections from Claude's response
+                const sections = [];
+                const lines = analysisText.split('\n');
+                let currentSection = { title: 'Overview', content: '' };
+                
+                lines.forEach(line => {
+                    line = line.trim();
+                    if (line.includes('**') && line.length < 100) {
+                        // This looks like a heading
+                        if (currentSection.content) {
+                            sections.push({...currentSection});
+                        }
+                        currentSection = {
+                            title: line.replace(/\*\*/g, ''),
+                            content: ''
+                        };
+                    } else if (line.length > 0) {
+                        currentSection.content += line + '<br>';
+                    }
+                });
+                
+                if (currentSection.content) {
+                    sections.push(currentSection);
+                }
+                
+                return sections.length > 0 ? sections : [{ title: 'Analysis', content: analysisText }];
+            }
+
+            generateFullAnalysisLink(data) {
+                // Create a URL to view the full analysis
+                const fullAnalysisLink = document.getElementById('fullAnalysisLink');
+                
+                // You can replace this with your actual analysis viewing URL
+                const analysisId = this.sessionId + '_' + Date.now();
+                const fullUrl = `${this.apiUrl}/analysis/${analysisId}`;
+                
+                fullAnalysisLink.href = fullUrl;
+                fullAnalysisLink.style.display = 'inline-flex';
+                
+                // Store analysis data for potential sharing
+                this.currentAnalysis = data;
+            }
+
+            async shareAnalysis() {
+                if (!this.currentAnalysis) {
+                    this.showAlert('⚠️ No analysis to share');
+                    return;
+                }
+
+                const shareText = `🤖 BrightSpark AI Analysis Results:\n\n${this.currentAnalysis.analysis?.substring(0, 200)}...\n\n✨ Generated by BrightSpark AI`;
+                
+                if (this.tg) {
+                    this.tg.shareMessage(shareText);
+                } else {
+                    navigator.clipboard.writeText(shareText).then(() => {
+                        this.showAlert('✅ Analysis copied to clipboard!');
+                    }).catch(() => {
+                        this.showAlert('📤 Share text: ' + shareText);
+                    });
+                }
             }
 
             updateStatus(message, connected) {
@@ -649,92 +1090,6 @@
                 this.showLoading(false);
             }
 
-            async browseTemplates() {
-                if (!this.connected) {
-                    this.showAlert('⚠️ Not connected to backend');
-                    return;
-                }
-
-                this.showLoading(true);
-                this.setLoadingText('📚 Loading templates from backend...');
-                this.updateStatus('📚 Requesting templates...', true);
-
-                const browseData = {
-                    type: 'template_browse',
-                    filters: {
-                        category: 'all',
-                        complexity: 'beginner_to_advanced'
-                    },
-                    limit: 20
-                };
-
-                this.sendMessage(browseData);
-            }
-
-            async analyzeWorkflow() {
-                if (!this.connected) {
-                    this.showAlert('⚠️ Not connected to backend');
-                    return;
-                }
-
-                this.showLoading(true);
-                this.setLoadingText('🤖 Starting Claude AI workflow analysis...');
-                this.updateStatus('🤖 Requesting Claude AI analysis...', true);
-
-                const analysisData = {
-                    type: 'workflow_analysis',
-                    template_id: 1, // Use real template ID from your backend
-                    user_query: `Please analyze this Social Media Content Publisher workflow template for ${this.user?.first_name || 'me'} with specific recommendations, efficiency score, and implementation guidance.`,
-                    analysis_type: 'comprehensive'
-                };
-
-                this.sendMessage(analysisData);
-            }
-
-            showTemplateResults(data) {
-                const templateCount = data.templates?.length || 0;
-                let message = `📚 Found ${templateCount} Templates!\n\n`;
-                
-                if (data.templates && data.templates.length > 0) {
-                    message += `Top Templates:\n`;
-                    data.templates.slice(0, 3).forEach(template => {
-                        message += `• ${template.name}\n`;
-                    });
-                    
-                    if (templateCount > 3) {
-                        message += `• And ${templateCount - 3} more...\n`;
-                    }
-                }
-                
-                message += `\n✨ Backend connection working!`;
-                this.showAlert(message);
-            }
-
-            showAnalysisResults(data) {
-                let message = `🤖 **Claude AI Analysis Complete!**\n\n`;
-                
-                if (data.analysis) {
-                    message += `✅ Real Claude AI Analysis\n\n`;
-                    
-                    // Show preview of analysis
-                    const analysisPreview = data.analysis.substring(0, 400);
-                    message += `**Analysis Preview:**\n${analysisPreview}...`;
-                    
-                    if (data.efficiency_score) {
-                        message += `\n\n⚡ Efficiency Score: ${data.efficiency_score}/100`;
-                    }
-                    
-                    if (data.recommendations) {
-                        message += `\n\n💡 ${data.recommendations.length} recommendations provided`;
-                    }
-                } else {
-                    message += `⚠️ Analysis completed\n`;
-                    message += `Response: ${JSON.stringify(data).substring(0, 200)}...`;
-                }
-
-                this.showAlert(message);
-            }
-
             showFeature(feature) {
                 const features = {
                     ai: '🤖 **Real Claude AI Integration**\n\nConnected to your working Replit backend with genuine Claude AI analysis. Get personalized workflow insights and recommendations.',
@@ -744,14 +1099,20 @@
                 };
 
                 const message = features[feature] || 'Feature information not available.';
-                this.showAlert(message);
+                
+                // Use shorter message for Telegram limits
+                const shortMessage = message.length > 200 ? message.substring(0, 200) + '...' : message;
+                this.showAlert(shortMessage);
             }
 
             showAlert(message) {
+                // Ensure message is within Telegram limits
+                const shortMessage = message.length > 256 ? message.substring(0, 253) + '...' : message;
+                
                 if (this.tg) {
-                    this.tg.showAlert(message);
+                    this.tg.showAlert(shortMessage);
                 } else {
-                    alert(message);
+                    alert(shortMessage);
                 }
             }
         }

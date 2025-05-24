@@ -562,15 +562,28 @@
                 this.showLoading(true);
                 console.log('🤖 Requesting workflow analysis...');
                 
-                this.sendToBackend({
-                    type: 'workflow_analysis_request',
-                    data: {
-                        analysis_type: 'comprehensive',
-                        workflow_context: 'general_automation'
-                    },
-                    timestamp: Date.now()
-                });
-            }
+               this.sendToBackend({
+    type: 'workflow_analysis_request',
+    data: {
+        analysis_type: 'comprehensive',
+        workflow: {
+            name: 'Sample Email Marketing Workflow',
+            nodes: [
+                { id: 'trigger', type: 'webhook', name: 'New Lead Trigger' },
+                { id: 'filter', type: 'if', name: 'Filter Valid Emails' },
+                { id: 'email', type: 'send_email', name: 'Send Welcome Email' },
+                { id: 'crm', type: 'airtable', name: 'Add to CRM' }
+            ],
+            connections: [
+                { from: 'trigger', to: 'filter' },
+                { from: 'filter', to: 'email' },
+                { from: 'email', to: 'crm' }
+            ]
+        },
+        workflow_context: 'email_marketing_automation'
+    },
+    timestamp: Date.now()
+});
 
             showTemplateResults(data) {
                 this.showLoading(false);

@@ -578,6 +578,8 @@
                             errorMessage = data.error;
                         } else if (data.details) {
                             errorMessage = data.details;
+                        } else if (data.data && data.data.message) {
+                            errorMessage = data.data.message;  // Handle nested error messages
                         } else {
                             errorMessage = 'Backend error (no details provided)';
                         }

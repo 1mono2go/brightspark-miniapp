@@ -416,21 +416,50 @@
             async testBackendHealth() {
                 try {
                     this.updateStatus('🏥 Testing backend health...', false);
+                    console.log('🔍 Testing backend URL:', this.apiUrl);
+                    
+                    // Add timeout and better error handling
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
                     
                     const response = await fetch(`${this.apiUrl}/api/health`, {
+                        method: 'GET',
                         headers: {
-                            'bypass-tunnel-reminder': 'miniapp',
-                            'User-Agent': 'BrightSparkAI-MiniApp/1.0'
-                        }
+                            'Content-Type': 'application/json'
+                        },
+                        signal: controller.signal
                     });
-                    const health = await response.json();
                     
+                    clearTimeout(timeoutId);
+                    
+                    console.log('📡 Response status:', response.status);
+                    console.log('📡 Response headers:', [...response.headers.entries()]);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const health = await response.json();
                     console.log('✅ Backend health:', health);
+                    
                     this.updateConnectionStatus(`✅ Backend healthy - Templates: ${health.features?.templates}, Claude: ${health.features?.claudeAPI}`);
+                    
+                    return health;
                     
                 } catch (error) {
                     console.error('🚨 Health check failed:', error);
-                    this.updateConnectionStatus('❌ Backend health check failed');
+                    console.error('🚨 Error name:', error.name);
+                    console.error('🚨 Error message:', error.message);
+                    
+                    // More specific error handling
+                    if (error.name === 'AbortError') {
+                        this.updateConnectionStatus('❌ Backend request timeout (10s)');
+                    } else if (error.message.includes('fetch')) {
+                        this.updateConnectionStatus('❌ Network request blocked or failed');
+                    } else {
+                        this.updateConnectionStatus(`❌ Backend error: ${error.message}`);
+                    }
+                    
                     throw error;
                 }
             }
@@ -503,6 +532,7 @@
 
             handleMessage(data) {
                 console.log('📨 Received message:', data.type, data);
+                console.log('📨 Full message data:', JSON.stringify(data, null, 2));
 
                 switch (data.type) {
                     case 'session_initialized':
@@ -535,8 +565,24 @@
                         break;
 
                     case 'error':
-                        console.error('🚨 Backend error:', data.message);
-                        this.updateStatus(`❌ Error: ${data.message}`, false);
+                        console.error('🚨 Backend error object:', data);
+                        console.error('🚨 Error message:', data.message);
+                        console.error('🚨 Error details:', data.error);
+                        console.error('🚨 Full error data:', JSON.stringify(data, null, 2));
+                        
+                        // Handle different error message formats
+                        let errorMessage = 'Unknown error';
+                        if (data.message) {
+                            errorMessage = data.message;
+                        } else if (data.error) {
+                            errorMessage = data.error;
+                        } else if (data.details) {
+                            errorMessage = data.details;
+                        } else {
+                            errorMessage = 'Backend error (no details provided)';
+                        }
+                        
+                        this.updateStatus(`❌ Error: ${errorMessage}`, false);
                         this.hideLoading();
                         break;
 
@@ -547,10 +593,12 @@
 
             sendMessage(data) {
                 if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+                    console.log('📤 Sending message:', data.type, data);
+                    console.log('📤 Full message data:', JSON.stringify(data, null, 2));
                     this.ws.send(JSON.stringify(data));
                     return true;
                 } else {
-                    console.error('🚨 WebSocket not ready');
+                    console.error('🚨 WebSocket not ready, state:', this.ws?.readyState);
                     this.updateStatus('❌ Connection not ready', false);
                     return false;
                 }

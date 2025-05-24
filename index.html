@@ -422,17 +422,36 @@
                 }
             }
 
-            async connectToBackend() {
-                // This would connect to your existing Spark AI event bus
-                // For now, simulating connection
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        this.backendConnected = true;
-                        this.updateStatus('Connected to BrightSpark AI Backend', true);
-                        resolve();
-                    }, 1000);
-                });
-            }
+         async connectToBackend() {
+    try {
+        // 🚀 REPLACE THIS WITH YOUR ACTUAL REPLIT URL
+        const baseUrl = 'https://1c558653defd-5000.1c558653defd.repl.co';
+        const wsUrl = baseUrl.replace('https://', 'wss://') + '/ws';
+        
+        console.log('🔌 Connecting to BrightSpark backend:', wsUrl);
+        
+        this.websocket = new WebSocket(wsUrl);
+        this.setupWebSocketHandlers();
+        
+        // Wait for connection
+        await this.waitForConnection();
+        
+        // Initialize AG-UI protocol
+        await this.initializeAGUI();
+        
+        this.backendConnected = true;
+        this.updateStatus('Connected to BrightSpark AI Backend', true);
+        
+        console.log('✅ Backend connection established successfully!');
+        
+    } catch (error) {
+        console.error('❌ Backend connection failed:', error);
+        this.updateStatus('Connection failed - check backend', false);
+        
+        // Try to reconnect after 5 seconds
+        setTimeout(() => this.connectToBackend(), 5000);
+    }
+}
 
             updateStatus(message, connected) {
                 const statusText = document.getElementById('status-text');

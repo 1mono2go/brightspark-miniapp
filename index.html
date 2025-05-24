@@ -564,6 +564,16 @@
                         this.setLoadingText(`🤖 Claude AI: ${data.chunk?.substring(0, 50)}...`);
                         break;
 
+                    case 'connection_established':
+                        console.log('✅ Connection established:', data.data?.message);
+                        break;
+
+                    case 'workflow_analysis_error':
+                        this.hideLoading();
+                        this.updateStatus('❌ Claude AI analysis failed', false);
+                        this.showAlert('Claude AI analysis failed. Please try again or contact support.');
+                        break;
+
                     case 'error':
                         console.error('🚨 Backend error object:', data);
                         console.error('🚨 Error message:', data.message);
@@ -682,20 +692,20 @@
 
             showTemplateResults(data) {
                 const templateCount = data.templates?.length || 0;
-                let message = `📚 **Templates Loaded Successfully!**\n\n`;
-                message += `Found ${templateCount} workflow templates from your backend\n\n`;
+                let message = `📚 Found ${templateCount} Templates!\n\n`;
                 
                 if (data.templates && data.templates.length > 0) {
-                    message += `**Available Templates:**\n`;
-                    data.templates.slice(0, 5).forEach(template => {
-                        message += `• ${template.name || template.id}\n`;
-                        if (template.category) message += `  Category: ${template.category}\n`;
-                        if (template.complexity) message += `  Complexity: ${template.complexity}\n`;
-                        message += '\n';
+                    message += `Top Templates:\n`;
+                    data.templates.slice(0, 3).forEach(template => {
+                        message += `• ${template.name}\n`;
                     });
+                    
+                    if (templateCount > 3) {
+                        message += `• And ${templateCount - 3} more...\n`;
+                    }
                 }
                 
-                message += `✨ Real backend connection working perfectly!`;
+                message += `\n✨ Backend connection working!`;
                 this.showAlert(message);
             }
 

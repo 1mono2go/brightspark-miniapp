@@ -377,9 +377,9 @@
                 this.sessionId = null;
                 this.templates = [];
                 
-                // WORKING URLs via localtunnel from your Replit backend
-                this.apiUrl = 'https://brightspark-backend.loca.lt';
-                this.wsUrl = 'wss://brightspark-backend.loca.lt/ws';
+                // PROXY TUNNEL URLs from Replit AI - Bypasses authentication!
+                this.apiUrl = 'https://brightspark-proxy-6139.loca.lt';
+                this.wsUrl = 'wss://brightspark-proxy-6139.loca.lt/ws';
                 
                 this.init();
             }
@@ -417,7 +417,12 @@
                 try {
                     this.updateStatus('🏥 Testing backend health...', false);
                     
-                    const response = await fetch(`${this.apiUrl}/api/health`);
+                    const response = await fetch(`${this.apiUrl}/api/health`, {
+                        headers: {
+                            'bypass-tunnel-reminder': 'miniapp',
+                            'User-Agent': 'BrightSparkAI-MiniApp/1.0'
+                        }
+                    });
                     const health = await response.json();
                     
                     console.log('✅ Backend health:', health);

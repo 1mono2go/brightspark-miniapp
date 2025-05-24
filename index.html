@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BrightSpark AI</title>
+    <title>BrightSpark AI - Diagnostic</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -27,48 +27,17 @@
             padding: 16px;
             min-height: 100vh;
             background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: 
-                radial-gradient(circle at 20% 80%, rgba(255, 193, 7, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 193, 7, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(255, 193, 7, 0.05) 0%, transparent 50%);
-            pointer-events: none;
-        }
-
-        .tech-pattern {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.1;
-            background-image: 
-                linear-gradient(90deg, transparent 49%, rgba(255, 193, 7, 0.3) 50%, transparent 51%),
-                linear-gradient(0deg, transparent 49%, rgba(255, 193, 7, 0.3) 50%, transparent 51%);
-            background-size: 20px 20px;
-            pointer-events: none;
         }
 
         .header {
             text-align: center;
             margin-bottom: 30px;
-            animation: fadeInDown 0.8s ease-out;
             position: relative;
             z-index: 2;
         }
 
         .logo {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 700;
             margin-bottom: 8px;
             text-shadow: 0 0 20px rgba(255, 193, 7, 0.5);
@@ -78,7 +47,7 @@
         .logo .spark { color: #FFC107; }
         .logo .lightning {
             color: #FFC107;
-            font-size: 36px;
+            font-size: 32px;
             margin: 0 8px;
             display: inline-block;
             animation: pulse 2s infinite;
@@ -91,7 +60,7 @@
             font-weight: 300;
         }
 
-        .welcome-card {
+        .diagnostic-card {
             background: rgba(52, 73, 94, 0.8);
             backdrop-filter: blur(10px);
             border-radius: 16px;
@@ -99,575 +68,348 @@
             margin-bottom: 24px;
             border: 1px solid rgba(255, 193, 7, 0.2);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            animation: fadeInUp 0.8s ease-out 0.2s both;
-            position: relative;
-            z-index: 2;
         }
 
-        .user-greeting {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: #ffffff;
-        }
-
-        .connection-status {
-            font-size: 12px;
-            opacity: 0.8;
-            margin-bottom: 16px;
-            padding: 8px 12px;
-            border-radius: 6px;
+        .test-section {
+            margin-bottom: 20px;
+            padding: 16px;
             background: rgba(44, 62, 80, 0.6);
+            border-radius: 8px;
             border: 1px solid rgba(255, 193, 7, 0.3);
         }
 
-        .description {
-            font-size: 14px;
-            line-height: 1.5;
-            opacity: 0.9;
-            margin-bottom: 24px;
-            color: #ecf0f1;
+        .test-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #FFC107;
+            margin-bottom: 12px;
         }
 
-        .action-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
+        .test-result {
+            font-size: 12px;
+            font-family: monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 8px;
+            max-height: 100px;
+            overflow-y: auto;
         }
 
         .btn {
-            padding: 16px 24px;
+            padding: 12px 20px;
             border: none;
-            border-radius: 12px;
-            font-size: 16px;
+            border-radius: 8px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            text-decoration: none;
-            color: inherit;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn-primary {
+            margin: 5px;
             background: linear-gradient(45deg, #FFC107, #FFD54F);
             color: #2c3e50;
-            font-weight: 700;
-            box-shadow: 0 4px 20px rgba(255, 193, 7, 0.4);
         }
 
-        .btn-secondary {
-            background: rgba(52, 73, 94, 0.6);
-            color: #ffffff;
-            border: 2px solid rgba(255, 193, 7, 0.5);
+        .btn:hover {
+            transform: translateY(-2px);
         }
 
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin-top: 24px;
-        }
-
-        .feature-card {
-            background: rgba(44, 62, 80, 0.6);
-            border-radius: 12px;
-            padding: 18px;
-            text-align: center;
-            border: 1px solid rgba(255, 193, 7, 0.2);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .feature-card:hover {
-            background: rgba(52, 73, 94, 0.8);
-            border-color: #FFC107;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(255, 193, 7, 0.2);
-        }
-
-        .feature-icon {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .feature-title {
+        .status {
+            padding: 8px 12px;
+            border-radius: 6px;
             font-size: 12px;
+            margin-top: 8px;
             font-weight: 600;
-            opacity: 0.9;
-            color: #ecf0f1;
         }
 
-        .status-bar {
-            background: rgba(44, 62, 80, 0.8);
-            border-radius: 10px;
-            padding: 14px;
-            margin-top: 24px;
-            font-size: 12px;
-            opacity: 0.9;
-            border: 1px solid rgba(255, 193, 7, 0.3);
-            position: relative;
-            z-index: 2;
+        .status.success {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            border: 1px solid #2ecc71;
         }
 
-        .status-indicator {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            background: #FFC107;
-            border-radius: 50%;
-            margin-right: 10px;
-            animation: glow 2s infinite alternate;
-            box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+        .status.error {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
         }
 
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 24px;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(44, 62, 80, 0.95);
-            border-radius: 12px;
-            z-index: 2000;
-            min-width: 200px;
-            backdrop-filter: blur(10px);
-        }
-
-        .spinner {
-            width: 36px;
-            height: 36px;
-            border: 3px solid rgba(255, 193, 7, 0.3);
-            border-top: 3px solid #FFC107;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 16px;
-        }
-
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        .status.testing {
+            background: rgba(241, 196, 15, 0.2);
+            color: #f1c40f;
+            border: 1px solid #f1c40f;
         }
 
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.1); }
         }
-
-        @keyframes glow {
-            0% { box-shadow: 0 0 10px rgba(255, 193, 7, 0.5); }
-            100% { box-shadow: 0 0 20px rgba(255, 193, 7, 0.8); }
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 380px) {
-            .container { padding: 12px; }
-            .logo { font-size: 28px; }
-            .welcome-card { padding: 20px; }
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="tech-pattern"></div>
-        
         <div class="header">
             <div class="logo">
                 <span class="bright">BRIGHT</span><span class="lightning">⚡</span><span class="spark">SPARK</span>
             </div>
-            <div class="subtitle">Intelligent Workflow Automation</div>
+            <div class="subtitle">Connection Diagnostics</div>
         </div>
 
-        <div class="welcome-card">
-            <div class="user-greeting" id="userGreeting">Welcome to BrightSpark AI!</div>
-            <div class="connection-status" id="connectionStatus">
-                🔌 Connecting to backend...
-            </div>
-            <div class="description">
-                Connected to your working Replit backend via WebSocket. Real Claude AI analysis ready!
-            </div>
+        <div class="diagnostic-card">
+            <h2 style="color: #FFC107; margin-bottom: 16px;">🔍 Backend Connection Diagnostic</h2>
             
-            <div class="action-buttons">
-                <button class="btn btn-primary" id="browseBtn" disabled onclick="brightSpark.browseTemplates()">
-                    📚 Browse Templates
-                </button>
-                <button class="btn btn-secondary" id="analyzeBtn" disabled onclick="brightSpark.analyzeWorkflow()">
-                    🔍 Analyze Workflow with Claude AI
-                </button>
+            <div class="test-section">
+                <div class="test-title">1. HTTP Endpoints Test</div>
+                <button class="btn" onclick="diagnostic.testHTTP()">Test HTTP Connections</button>
+                <div class="test-result" id="httpResult">Click to test HTTP endpoints...</div>
+                <div class="status testing" id="httpStatus">Ready to test</div>
             </div>
 
-            <div class="features-grid">
-                <div class="feature-card" onclick="brightSpark.showFeature('ai')">
-                    <div class="feature-icon">🤖</div>
-                    <div class="feature-title">Claude AI</div>
-                </div>
-                <div class="feature-card" onclick="brightSpark.showFeature('templates')">
-                    <div class="feature-icon">📋</div>
-                    <div class="feature-title">Templates</div>
-                </div>
-                <div class="feature-card" onclick="brightSpark.showFeature('insights')">
-                    <div class="feature-icon">📊</div>
-                    <div class="feature-title">Real Insights</div>
-                </div>
-                <div class="feature-card" onclick="brightSpark.showFeature('deploy')">
-                    <div class="feature-icon">🚀</div>
-                    <div class="feature-title">Deploy</div>
-                </div>
+            <div class="test-section">
+                <div class="test-title">2. WebSocket Connections Test</div>
+                <button class="btn" onclick="diagnostic.testWebSockets()">Test WebSocket URLs</button>
+                <div class="test-result" id="wsResult">Click to test WebSocket connections...</div>
+                <div class="status testing" id="wsStatus">Ready to test</div>
+            </div>
+
+            <div class="test-section">
+                <div class="test-title">3. Port-Specific Test</div>
+                <button class="btn" onclick="diagnostic.testPorts()">Test Different Ports</button>
+                <div class="test-result" id="portResult">Click to test various ports...</div>
+                <div class="status testing" id="portStatus">Ready to test</div>
+            </div>
+
+            <div class="test-section">
+                <div class="test-title">4. Working Connection</div>
+                <button class="btn" onclick="diagnostic.useWorkingConnection()" id="useWorkingBtn" disabled>Use Working Connection</button>
+                <div class="test-result" id="workingResult">Find working connection first...</div>
+                <div class="status testing" id="workingStatus">No working connection found yet</div>
             </div>
         </div>
-
-        <div class="status-bar">
-            <span class="status-indicator" id="statusIndicator"></span>
-            <span id="status-text">Initializing WebSocket connection...</span>
-        </div>
-    </div>
-
-    <!-- Loading Overlay -->
-    <div class="loading" id="loading">
-        <div class="spinner"></div>
-        <div id="loadingText">Connecting to BrightSpark AI...</div>
     </div>
 
     <script>
-        class BrightSparkAI {
+        class BrightSparkDiagnostic {
             constructor() {
                 this.tg = window.Telegram?.WebApp;
-                this.user = null;
-                this.ws = null;
-                this.connected = false;
-                this.sessionId = null;
-                this.templates = [];
-                
-                // Your working Replit WebSocket URL
-                this.wsUrl = 'wss://f65135a4-a630-48e1-b1bc-afae926f9770-00-3flnf1uw5vz2q.riker.replit.dev';
-                
+                this.baseUrl = 'f65135a4-a630-48e1-b1bc-afae926f9770-00-3flnf1uw5vz2q.riker.replit.dev';
+                this.workingConnection = null;
                 this.init();
             }
 
-            async init() {
-                try {
-                    // Initialize Telegram Mini App
-                    if (this.tg) {
-                        this.tg.ready();
-                        this.tg.expand();
-                        this.tg.setHeaderColor('#2c3e50');
-                        this.user = this.tg.initDataUnsafe?.user;
-                        
-                        if (this.user?.first_name) {
-                            document.getElementById('userGreeting').textContent = 
-                                `Welcome, ${this.user.first_name}!`;
-                        }
-                        
-                        console.log('👤 Telegram user:', this.user);
-                    }
-
-                    // Connect to your working backend
-                    this.connectWebSocket();
-                    
-                } catch (error) {
-                    console.error('🚨 Initialization error:', error);
-                    this.updateStatus('❌ Initialization failed', false);
+            init() {
+                if (this.tg) {
+                    this.tg.ready();
+                    this.tg.expand();
+                    this.tg.setHeaderColor('#2c3e50');
                 }
+                
+                console.log('🚀 Diagnostic initialized');
             }
 
-            connectWebSocket() {
-                this.updateStatus('🔌 Connecting to backend...', false);
-                this.updateConnectionStatus('🔌 Establishing WebSocket connection...');
+            updateResult(elementId, message) {
+                document.getElementById(elementId).textContent = message;
+            }
+
+            updateStatus(elementId, message, type = 'testing') {
+                const element = document.getElementById(elementId);
+                element.textContent = message;
+                element.className = `status ${type}`;
+            }
+
+            async testHTTP() {
+                this.updateStatus('httpStatus', 'Testing HTTP endpoints...', 'testing');
+                this.updateResult('httpResult', 'Starting HTTP tests...\n');
                 
-                try {
-                    console.log('🔌 Connecting to:', this.wsUrl);
-                    this.ws = new WebSocket(this.wsUrl);
-                    
-                    this.ws.onopen = () => {
-                        console.log('✅ WebSocket connected');
-                        this.connected = true;
-                        this.updateStatus('✅ Connected to backend', true);
-                        this.updateConnectionStatus('✅ WebSocket connected - Initializing session...');
+                const httpUrls = [
+                    `https://${this.baseUrl}`,
+                    `https://${this.baseUrl}/`,
+                    `https://${this.baseUrl}:5000`,
+                    `https://${this.baseUrl}:5000/`,
+                    `http://${this.baseUrl}`,
+                    `http://${this.baseUrl}:5000`
+                ];
+
+                let results = 'HTTP Test Results:\n\n';
+                
+                for (const url of httpUrls) {
+                    try {
+                        results += `Testing: ${url}\n`;
+                        const response = await fetch(url, { 
+                            method: 'GET',
+                            timeout: 5000
+                        });
                         
-                        // Initialize session (based on your backend's expected events)
-                        this.initializeSession();
-                    };
-
-                    this.ws.onmessage = (event) => {
-                        try {
-                            const data = JSON.parse(event.data);
-                            this.handleMessage(data);
-                        } catch (error) {
-                            console.error('🚨 Message parsing error:', error);
-                        }
-                    };
-
-                    this.ws.onerror = (error) => {
-                        console.error('🚨 WebSocket error:', error);
-                        this.updateStatus('❌ Connection error', false);
-                        this.updateConnectionStatus('❌ WebSocket connection failed');
-                    };
-
-                    this.ws.onclose = (event) => {
-                        console.log('🔌 WebSocket closed:', event.code, event.reason);
-                        this.connected = false;
-                        this.updateStatus('❌ Disconnected', false);
-                        this.updateConnectionStatus('❌ Connection lost - Attempting reconnect...');
-                        
-                        // Auto-reconnect after 3 seconds
-                        setTimeout(() => {
-                            if (!this.connected) {
-                                this.connectWebSocket();
+                        if (response.ok) {
+                            const text = await response.text();
+                            results += `✅ SUCCESS (${response.status})\n`;
+                            results += `Content: ${text.substring(0, 50)}...\n\n`;
+                            
+                            if (!this.workingConnection) {
+                                this.workingConnection = url.replace('http://', '').replace('https://', '');
+                                this.enableWorkingConnection();
                             }
-                        }, 3000);
+                        } else {
+                            results += `❌ FAILED (${response.status})\n\n`;
+                        }
+                    } catch (error) {
+                        results += `❌ ERROR: ${error.message}\n\n`;
+                    }
+                    
+                    this.updateResult('httpResult', results);
+                }
+                
+                this.updateStatus('httpStatus', 'HTTP tests completed', 'success');
+            }
+
+            async testWebSockets() {
+                this.updateStatus('wsStatus', 'Testing WebSocket connections...', 'testing');
+                this.updateResult('wsResult', 'Starting WebSocket tests...\n');
+                
+                const wsUrls = [
+                    `wss://${this.baseUrl}`,
+                    `wss://${this.baseUrl}/`,
+                    `wss://${this.baseUrl}:5000`,
+                    `wss://${this.baseUrl}:5000/`,
+                    `ws://${this.baseUrl}`,
+                    `ws://${this.baseUrl}:5000`
+                ];
+
+                let results = 'WebSocket Test Results:\n\n';
+                
+                for (const url of wsUrls) {
+                    try {
+                        results += `Testing: ${url}\n`;
+                        
+                        const wsTest = await this.testSingleWebSocket(url);
+                        if (wsTest.success) {
+                            results += `✅ CONNECTION SUCCESS\n`;
+                            results += `Response: ${wsTest.message}\n\n`;
+                            
+                            if (!this.workingConnection) {
+                                this.workingConnection = url;
+                                this.enableWorkingConnection();
+                            }
+                        } else {
+                            results += `❌ CONNECTION FAILED\n`;
+                            results += `Error: ${wsTest.error}\n\n`;
+                        }
+                    } catch (error) {
+                        results += `❌ ERROR: ${error.message}\n\n`;
+                    }
+                    
+                    this.updateResult('wsResult', results);
+                }
+                
+                this.updateStatus('wsStatus', 'WebSocket tests completed', 'success');
+            }
+
+            testSingleWebSocket(url) {
+                return new Promise((resolve) => {
+                    const ws = new WebSocket(url);
+                    const timeout = setTimeout(() => {
+                        ws.close();
+                        resolve({ success: false, error: 'Connection timeout' });
+                    }, 3000);
+
+                    ws.onopen = () => {
+                        clearTimeout(timeout);
+                        ws.close();
+                        resolve({ success: true, message: 'Connection established' });
                     };
+
+                    ws.onerror = (error) => {
+                        clearTimeout(timeout);
+                        resolve({ success: false, error: 'Connection failed' });
+                    };
+
+                    ws.onclose = (event) => {
+                        clearTimeout(timeout);
+                        if (event.code === 1000) {
+                            resolve({ success: true, message: 'Clean connection' });
+                        }
+                    };
+                });
+            }
+
+            async testPorts() {
+                this.updateStatus('portStatus', 'Testing different ports...', 'testing');
+                this.updateResult('portResult', 'Starting port tests...\n');
+                
+                const ports = ['', ':3000', ':5000', ':8080', ':80', ':443'];
+                let results = 'Port Test Results:\n\n';
+                
+                for (const port of ports) {
+                    const httpUrl = `https://${this.baseUrl}${port}`;
+                    const wsUrl = `wss://${this.baseUrl}${port}`;
                     
-                } catch (error) {
-                    console.error('🚨 WebSocket creation error:', error);
-                    this.updateStatus('❌ WebSocket failed', false);
-                    this.updateConnectionStatus('❌ Failed to create WebSocket connection');
+                    results += `Testing port ${port || 'default'}:\n`;
+                    
+                    // Test HTTP
+                    try {
+                        const response = await fetch(httpUrl, { timeout: 3000 });
+                        if (response.ok) {
+                            results += `  ✅ HTTP: Working\n`;
+                            if (!this.workingConnection) {
+                                this.workingConnection = `${this.baseUrl}${port}`;
+                                this.enableWorkingConnection();
+                            }
+                        } else {
+                            results += `  ❌ HTTP: Failed (${response.status})\n`;
+                        }
+                    } catch (error) {
+                        results += `  ❌ HTTP: ${error.message}\n`;
+                    }
+                    
+                    // Test WebSocket
+                    const wsTest = await this.testSingleWebSocket(wsUrl);
+                    if (wsTest.success) {
+                        results += `  ✅ WebSocket: Working\n`;
+                        if (!this.workingConnection) {
+                            this.workingConnection = wsUrl;
+                            this.enableWorkingConnection();
+                        }
+                    } else {
+                        results += `  ❌ WebSocket: ${wsTest.error}\n`;
+                    }
+                    
+                    results += '\n';
+                    this.updateResult('portResult', results);
                 }
-            }
-
-            initializeSession() {
-                // Send session initialization (based on your backend logs)
-                const sessionData = {
-                    type: 'session_init',
-                    user_id: this.user?.id || 'anonymous',
-                    user_name: this.user?.first_name || 'Anonymous',
-                    timestamp: new Date().toISOString()
-                };
                 
-                console.log('🚀 Initializing session:', sessionData);
-                this.sendMessage(sessionData);
+                this.updateStatus('portStatus', 'Port tests completed', 'success');
             }
 
-            handleMessage(data) {
-                console.log('📨 Received message:', data.type, data);
-
-                switch (data.type) {
-                    case 'session_initialized':
-                        this.sessionId = data.session_id || 'anonymous';
-                        this.updateConnectionStatus(`✅ Session active: ${this.sessionId}`);
-                        this.enableButtons();
-                        break;
-
-                    case 'template_browse_result':
-                        this.templates = data.templates || [];
-                        this.showTemplateResults(data);
-                        break;
-
-                    case 'workflow_analysis_started':
-                        this.showLoading(true);
-                        this.setLoadingText('🤖 Claude AI analyzing workflow...');
-                        this.updateStatus('🤖 Claude AI working...', true);
-                        break;
-
-                    case 'workflow_analysis_completed':
-                        this.showLoading(false);
-                        this.showAnalysisResults(data);
-                        this.updateStatus('✅ Claude AI analysis complete', true);
-                        break;
-
-                    case 'error':
-                        console.error('🚨 Backend error:', data.message);
-                        this.updateStatus(`❌ Error: ${data.message}`, false);
-                        this.showLoading(false);
-                        break;
-
-                    default:
-                        console.log('📨 Unknown message type:', data.type);
-                }
-            }
-
-            sendMessage(data) {
-                if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-                    this.ws.send(JSON.stringify(data));
-                    return true;
-                } else {
-                    console.error('🚨 WebSocket not ready');
-                    this.updateStatus('❌ Connection not ready', false);
-                    return false;
-                }
-            }
-
-            enableButtons() {
-                document.getElementById('browseBtn').disabled = false;
-                document.getElementById('analyzeBtn').disabled = false;
-            }
-
-            updateStatus(message, connected) {
-                const statusText = document.getElementById('status-text');
-                const indicator = document.getElementById('statusIndicator');
+            enableWorkingConnection() {
+                const btn = document.getElementById('useWorkingBtn');
+                btn.disabled = false;
+                btn.textContent = 'Use Working Connection ✅';
                 
-                statusText.textContent = message;
-                indicator.style.background = connected ? '#FFC107' : '#e74c3c';
-                indicator.style.boxShadow = connected ? 
-                    '0 0 20px rgba(255, 193, 7, 0.8)' : 
-                    '0 0 20px rgba(231, 76, 60, 0.8)';
+                this.updateResult('workingResult', `Found working connection:\n${this.workingConnection}`);
+                this.updateStatus('workingStatus', 'Working connection found!', 'success');
             }
 
-            updateConnectionStatus(message) {
-                document.getElementById('connectionStatus').textContent = message;
-            }
-
-            setLoadingText(text) {
-                document.getElementById('loadingText').textContent = text;
-            }
-
-            showLoading(show = true) {
-                document.getElementById('loading').style.display = show ? 'block' : 'none';
-            }
-
-            browseTemplates() {
-                if (!this.connected) {
-                    this.showAlert('⚠️ Not connected to backend');
+            useWorkingConnection() {
+                if (!this.workingConnection) {
+                    alert('No working connection found yet. Run tests first!');
                     return;
                 }
 
-                this.showLoading(true);
-                this.setLoadingText('📚 Loading templates from backend...');
-                this.updateStatus('📚 Requesting templates...', true);
-
-                // Send template browse request (based on your backend's expected format)
-                const browseData = {
-                    type: 'template_browse',
-                    filters: {
-                        category: 'all',
-                        complexity: 'beginner_to_advanced'
-                    },
-                    limit: 20
-                };
-
-                this.sendMessage(browseData);
-            }
-
-            analyzeWorkflow() {
-                if (!this.connected) {
-                    this.showAlert('⚠️ Not connected to backend');
-                    return;
-                }
-
-                this.showLoading(true);
-                this.setLoadingText('🤖 Starting Claude AI workflow analysis...');
-                this.updateStatus('🤖 Requesting Claude AI analysis...', true);
-
-                // Send workflow analysis request (based on your backend's expected format)
-                const analysisData = {
-                    type: 'workflow_analysis',
-                    template_id: 'email-marketing', // Default template
-                    user_query: `Please analyze this workflow template for ${this.user?.first_name || 'me'} with specific recommendations and implementation guidance.`,
-                    analysis_type: 'comprehensive'
-                };
-
-                this.sendMessage(analysisData);
-            }
-
-            showTemplateResults(data) {
-                this.showLoading(false);
+                const message = `🎉 Working Connection Found!\n\n` +
+                    `URL: ${this.workingConnection}\n\n` +
+                    `I'll now create a Mini App that uses this working connection.\n\n` +
+                    `Click OK to continue.`;
                 
-                const templateCount = data.templates?.length || 0;
-                let message = `📚 **Templates Loaded Successfully!**\n\n`;
-                message += `Found ${templateCount} workflow templates\n\n`;
-                
-                if (data.templates && data.templates.length > 0) {
-                    message += `**Available Templates:**\n`;
-                    data.templates.slice(0, 5).forEach(template => {
-                        message += `• ${template.name || template.id}\n`;
-                        if (template.category) message += `  ${template.category}`;
-                        if (template.complexity) message += ` | ${template.complexity}`;
-                        message += '\n\n';
-                    });
-                }
-                
-                message += `✨ Connected to your working backend!`;
-                this.showAlert(message);
-            }
-
-            showAnalysisResults(data) {
-                this.showLoading(false);
-                
-                let message = `🤖 **Claude AI Analysis Complete!**\n\n`;
-                
-                if (data.analysis) {
-                    message += `✅ Real Claude AI Analysis\n\n`;
-                    
-                    // Show preview of analysis
-                    const analysisPreview = data.analysis.substring(0, 400);
-                    message += `**Analysis Preview:**\n${analysisPreview}...`;
-                    
-                    if (data.efficiency_score) {
-                        message += `\n\n⚡ Efficiency Score: ${data.efficiency_score}/100`;
-                    }
-                    
-                    if (data.recommendations) {
-                        message += `\n\n💡 Recommendations: ${data.recommendations.length} insights provided`;
-                    }
-                } else {
-                    message += `⚠️ Analysis completed but no detailed results available`;
-                    message += `\nResponse: ${JSON.stringify(data).substring(0, 200)}...`;
-                }
-
-                this.showAlert(message);
-            }
-
-            showFeature(feature) {
-                const features = {
-                    ai: '🤖 **Claude AI Integration**\n\nReal Claude AI analysis connected to your working Replit backend. Get genuine workflow insights and recommendations.',
-                    templates: '📋 **Workflow Templates**\n\nBrowse real n8n workflow templates loaded from your backend templates.json file.',
-                    insights: '📊 **Real Analytics**\n\nActual performance data and analysis results from your Template Intelligence Engine.',
-                    deploy: '🚀 **Deployment Ready**\n\nYour backend is fully functional and ready for production deployment!'
-                };
-
-                const message = features[feature] || 'Feature information not available.';
-                this.showAlert(message);
-            }
-
-            showAlert(message) {
                 if (this.tg) {
                     this.tg.showAlert(message);
                 } else {
                     alert(message);
                 }
+                
+                console.log('✅ Working connection:', this.workingConnection);
             }
         }
 
-        // Initialize BrightSpark AI
-        const brightSpark = new BrightSparkAI();
+        const diagnostic = new BrightSparkDiagnostic();
     </script>
 </body>
 </html>

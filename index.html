@@ -830,7 +830,8 @@
 
             sendMessage(data) {
                 if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-                    console.log('📤 Sending message:', data.type, data);
+                    console.log('📤 Sending message:', data.type);
+                    console.log('📤 WebSocket ready state:', this.ws.readyState);
                     console.log('📤 Full message data:', JSON.stringify(data, null, 2));
                     
                     // Special logging for workflow analysis
@@ -839,9 +840,13 @@
                         console.log('  - Template ID:', data.template_id);
                         console.log('  - Template Name:', data.template_name);
                         console.log('  - User Query:', data.user_query);
+                        console.log('  - Analysis Type:', data.analysis_type);
+                        console.log('  - Message size (bytes):', JSON.stringify(data).length);
                     }
                     
+                    // Send the message
                     this.ws.send(JSON.stringify(data));
+                    console.log('✅ Message sent successfully');
                     return true;
                 } else {
                     console.error('🚨 WebSocket not ready, state:', this.ws?.readyState);
@@ -1087,15 +1092,9 @@
             }
 
             generateFullAnalysisLink(data) {
-                // Create a URL to view the full analysis
+                // For now, don't show the external link since backend endpoint isn't ready
                 const fullAnalysisLink = document.getElementById('fullAnalysisLink');
-                
-                // You can replace this with your actual analysis viewing URL
-                const analysisId = this.sessionId + '_' + Date.now();
-                const fullUrl = `${this.apiUrl}/analysis/${analysisId}`;
-                
-                fullAnalysisLink.href = fullUrl;
-                fullAnalysisLink.style.display = 'inline-flex';
+                fullAnalysisLink.style.display = 'none';
                 
                 // Store analysis data for potential sharing
                 this.currentAnalysis = data;
@@ -1107,35 +1106,26 @@
                     return;
                 }
 
-                // Create a concise share message (under 200 chars for safety)
+                // Create a simple share message that works reliably
                 const templateName = this.selectedTemplate?.name || 'Workflow';
-                const shareText = `🤖 BrightSpark AI Analysis: ${templateName}\n\n✨ Generated comprehensive workflow insights!\n\n🔗 Try BrightSpark AI for your workflows`;
+                const shareText = `BrightSpark AI analyzed: ${templateName}`;
                 
                 console.log('📤 Attempting to share:', shareText);
-                console.log('📤 Share text length:', shareText.length);
 
                 try {
-                    if (this.tg && this.tg.shareMessage) {
-                        console.log('📱 Using Telegram shareMessage');
-                        this.tg.shareMessage(shareText);
-                    } else if (navigator.share) {
-                        console.log('📱 Using Web Share API');
-                        await navigator.share({
-                            title: 'BrightSpark AI Analysis',
-                            text: shareText
-                        });
-                    } else if (navigator.clipboard) {
+                    // Skip Telegram shareMessage since it's failing - go straight to clipboard
+                    if (navigator.clipboard) {
                         console.log('📋 Copying to clipboard');
                         await navigator.clipboard.writeText(shareText);
                         this.showAlert('✅ Analysis copied to clipboard!');
                     } else {
-                        console.log('📋 Fallback: showing text to copy');
-                        this.showAlert('📤 Copy this: ' + shareText.substring(0, 200));
+                        // Fallback: show alert with text
+                        this.showAlert(`📤 ${shareText} - Analysis complete!`);
                     }
                 } catch (error) {
                     console.error('❌ Share failed:', error);
-                    // Fallback: just show the text
-                    this.showAlert('📤 BrightSpark AI analyzed your workflow! ✨');
+                    // Simple fallback
+                    this.showAlert('✅ BrightSpark AI analysis complete!');
                 }
             }
 

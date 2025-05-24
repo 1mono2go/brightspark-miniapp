@@ -228,17 +228,41 @@
             padding: 16px;
             cursor: pointer;
             transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .template-item::before {
+            content: '👆 Tap to select';
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-size: 10px;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+
+        .template-item:hover::before {
+            opacity: 0;
         }
 
         .template-item:hover {
             border-color: #FFC107;
             background: rgba(52, 73, 94, 0.8);
             transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
         }
 
         .template-item.selected {
             border-color: #FFC107;
             background: rgba(255, 193, 7, 0.1);
+            box-shadow: 0 4px 20px rgba(255, 193, 7, 0.4);
+        }
+
+        .template-item.selected::before {
+            content: '✅ Selected';
+            color: #FFC107;
+            font-weight: bold;
+            opacity: 1;
         }
 
         .template-name {
@@ -807,6 +831,16 @@
             sendMessage(data) {
                 if (this.ws && this.ws.readyState === WebSocket.OPEN) {
                     console.log('📤 Sending message:', data.type, data);
+                    console.log('📤 Full message data:', JSON.stringify(data, null, 2));
+                    
+                    // Special logging for workflow analysis
+                    if (data.type === 'workflow_analysis') {
+                        console.log('🔍 Analysis message details:');
+                        console.log('  - Template ID:', data.template_id);
+                        console.log('  - Template Name:', data.template_name);
+                        console.log('  - User Query:', data.user_query);
+                    }
+                    
                     this.ws.send(JSON.stringify(data));
                     return true;
                 } else {
@@ -878,16 +912,21 @@
                     templateItem.onclick = () => this.selectTemplate(template, templateItem);
                     
                     templateItem.innerHTML = `
-                        <div class="template-name">${template.name || `Template ${template.id}`}</div>
+                        <div class="template-name">📋 ${template.name || `Template ${template.id}`}</div>
                         <div class="template-description">${template.description || 'No description available'}</div>
                         <div class="template-meta">
-                            <span>Category: ${template.category || 'General'}</span>
-                            <span>Complexity: ${template.complexity || 'Medium'}</span>
+                            <span>🏷️ ${template.category || 'General'}</span>
+                            <span>⚡ ${template.complexity || 'Medium'}</span>
                         </div>
                     `;
 
                     templateList.appendChild(templateItem);
                 });
+
+                // Add instruction text at the top
+                const instructionDiv = document.createElement('div');
+                instructionDiv.innerHTML = '<div style="text-align: center; padding: 10px; font-size: 12px; opacity: 0.8; margin-bottom: 10px;">👆 Tap any template above to select it for analysis</div>';
+                templateList.insertBefore(instructionDiv, templateList.firstChild);
 
                 this.showTemplateSelection();
             }
@@ -906,6 +945,7 @@
                 document.getElementById('analyzeSelectedBtn').disabled = false;
                 
                 console.log('✅ Template selected:', template);
+                console.log('✅ Template ID:', template.id);
             }
 
             async analyzeSelectedTemplate() {
@@ -919,6 +959,9 @@
                     return;
                 }
 
+                console.log('🚀 Starting analysis for template:', this.selectedTemplate);
+                console.log('🚀 Template ID being sent:', this.selectedTemplate.id);
+
                 this.showLoading(true);
                 this.setLoadingText('🤖 Starting Claude AI workflow analysis...');
                 this.updateStatus('🤖 Requesting Claude AI analysis...', true);
@@ -926,10 +969,12 @@
                 const analysisData = {
                     type: 'workflow_analysis',
                     template_id: this.selectedTemplate.id,
+                    template_name: this.selectedTemplate.name,
                     user_query: `Please analyze the "${this.selectedTemplate.name}" workflow template for ${this.user?.first_name || 'me'} with specific recommendations, efficiency score, and implementation guidance.`,
                     analysis_type: 'comprehensive'
                 };
 
+                console.log('📤 Sending analysis data:', analysisData);
                 this.sendMessage(analysisData);
             }
 
@@ -959,9 +1004,12 @@
                 const scoreSection = document.getElementById('analysisScoreSection');
                 const scoreCircle = document.getElementById('scoreCircle');
                 
-                // Update title
+                // Update title with template name
                 const templateName = this.selectedTemplate?.name || 'Workflow';
                 analysisTitle.innerHTML = `🤖 Analysis: ${templateName}`;
+                
+                console.log('📊 Displaying analysis for:', templateName);
+                console.log('📊 Analysis data received:', data);
 
                 // Display efficiency score if available
                 if (data.efficiency_score) {
@@ -975,6 +1023,14 @@
                 let content = '';
                 
                 if (data.analysis) {
+                    // Add template confirmation at the top
+                    content += `<div class="analysis-section">
+                        <h4>📋 Template Analyzed</h4>
+                        <div><strong>${templateName}</strong><br>
+                        Category: ${this.selectedTemplate?.category || 'N/A'} | 
+                        Complexity: ${this.selectedTemplate?.complexity || 'N/A'}</div>
+                    </div>`;
+                    
                     // Split analysis into sections for better readability
                     const analysisText = data.analysis;
                     const sections = this.parseAnalysisIntoSections(analysisText);
@@ -1051,16 +1107,35 @@
                     return;
                 }
 
-                const shareText = `🤖 BrightSpark AI Analysis Results:\n\n${this.currentAnalysis.analysis?.substring(0, 200)}...\n\n✨ Generated by BrightSpark AI`;
+                // Create a concise share message (under 200 chars for safety)
+                const templateName = this.selectedTemplate?.name || 'Workflow';
+                const shareText = `🤖 BrightSpark AI Analysis: ${templateName}\n\n✨ Generated comprehensive workflow insights!\n\n🔗 Try BrightSpark AI for your workflows`;
                 
-                if (this.tg) {
-                    this.tg.shareMessage(shareText);
-                } else {
-                    navigator.clipboard.writeText(shareText).then(() => {
+                console.log('📤 Attempting to share:', shareText);
+                console.log('📤 Share text length:', shareText.length);
+
+                try {
+                    if (this.tg && this.tg.shareMessage) {
+                        console.log('📱 Using Telegram shareMessage');
+                        this.tg.shareMessage(shareText);
+                    } else if (navigator.share) {
+                        console.log('📱 Using Web Share API');
+                        await navigator.share({
+                            title: 'BrightSpark AI Analysis',
+                            text: shareText
+                        });
+                    } else if (navigator.clipboard) {
+                        console.log('📋 Copying to clipboard');
+                        await navigator.clipboard.writeText(shareText);
                         this.showAlert('✅ Analysis copied to clipboard!');
-                    }).catch(() => {
-                        this.showAlert('📤 Share text: ' + shareText);
-                    });
+                    } else {
+                        console.log('📋 Fallback: showing text to copy');
+                        this.showAlert('📤 Copy this: ' + shareText.substring(0, 200));
+                    }
+                } catch (error) {
+                    console.error('❌ Share failed:', error);
+                    // Fallback: just show the text
+                    this.showAlert('📤 BrightSpark AI analyzed your workflow! ✨');
                 }
             }
 

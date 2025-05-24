@@ -621,26 +621,12 @@
     this.showLoading(false);
     
     if (data && data.completeAnalysis) {
-        // Extract key insights from the markdown analysis
-        const analysis = data.completeAnalysis;
-        const lines = analysis.split('\n').filter(line => line.trim());
-        
-        // Count suggestions and issues
-        const suggestions = lines.filter(line => line.includes('**') && 
-            (line.toLowerCase().includes('suggest') || line.toLowerCase().includes('recommend'))).length;
-        const issues = lines.filter(line => line.includes('**') && 
-            (line.toLowerCase().includes('inefficien') || line.toLowerCase().includes('bottleneck'))).length;
-        
-        const message = `🤖 AI Analysis Complete!\n\n` +
+        // Simple success message that fits in Telegram popup
+        const message = `🤖 AI Analysis Complete! ✅\n\n` +
             `📊 Comprehensive workflow analysis generated\n` +
-            `💡 Optimization suggestions: ${suggestions}\n` +
-            `⚠️ Issues identified: ${issues}\n` +
-            `✅ Integration opportunities provided\n\n` +
-            `Analysis includes:\n` +
-            `• Workflow purpose summary\n` +
-            `• Inefficiency detection\n` +
-            `• Automation opportunities\n` +
-            `• Integration possibilities`;
+            `💡 Optimization suggestions provided\n` +
+            `⚠️ Issues and bottlenecks identified\n` +
+            `🔗 Integration opportunities listed`;
         
         if (this.tg) {
             this.tg.showAlert(message);
@@ -651,6 +637,7 @@
         this.showError('Analysis failed - no data received');
     }
 }
+        
         
 
             showError(message) {

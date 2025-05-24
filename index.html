@@ -424,34 +424,62 @@
 
          async connectToBackend() {
     try {
-        // 🚀 REPLACE THIS WITH YOUR ACTUAL REPLIT URL
-        const baseUrl = 'https://1c558653defd-5000.1c558653defd.repl.co';
-        const wsUrl = baseUrl.replace('https://', 'wss://') + '/ws';
+        console.log('🔌 Connecting to BrightSpark backend...');
         
-        console.log('🔌 Connecting to BrightSpark backend:', wsUrl);
+        // Your backend URL
+        const wsUrl = 'wss://1c558653defd-5000.1c558653defd.repl.co/ws';
         
+        // Create WebSocket connection
         this.websocket = new WebSocket(wsUrl);
-        this.setupWebSocketHandlers();
         
-        // Wait for connection
-        await this.waitForConnection();
+        // Handle connection opened
+        this.websocket.onopen = () => {
+            console.log('✅ WebSocket connected successfully!');
+            this.backendConnected = true;
+            this.updateStatus('Connected to BrightSpark AI Backend', true);
+            
+            // Send initial session message
+            this.websocket.send(JSON.stringify({
+                type: 'session_init',
+                data: {
+                    user_id: this.user?.id || 'anonymous',
+                    user_name: this.user?.first_name || 'User',
+                    platform: 'telegram_miniapp'
+                },
+                timestamp: Date.now()
+            }));
+        };
         
-        // Initialize AG-UI protocol
-        await this.initializeAGUI();
+        // Handle messages from backend
+        this.websocket.onmessage = (event) => {
+            try {
+                const message = JSON.parse(event.data);
+                console.log('📨 Received from backend:', message);
+                this.handleBackendMessage(message);
+            } catch (error) {
+                console.error('Failed to parse backend message:', error);
+            }
+        };
         
-        this.backendConnected = true;
-        this.updateStatus('Connected to BrightSpark AI Backend', true);
+        // Handle connection closed
+        this.websocket.onclose = () => {
+            console.log('🔌 WebSocket disconnected');
+            this.backendConnected = false;
+            this.updateStatus('Disconnected - check backend', false);
+        };
         
-        console.log('✅ Backend connection established successfully!');
+        // Handle connection errors
+        this.websocket.onerror = (error) => {
+            console.error('❌ WebSocket error:', error);
+            this.updateStatus('Connection error - check backend', false);
+        };
         
     } catch (error) {
         console.error('❌ Backend connection failed:', error);
-        this.updateStatus('Connection failed - check backend', false);
-        
-        // Try to reconnect after 5 seconds
-        setTimeout(() => this.connectToBackend(), 5000);
+        this.updateStatus('Connection failed - backend not available', false);
     }
 }
+        
 
             updateStatus(message, connected) {
                 const statusText = document.getElementById('status-text');

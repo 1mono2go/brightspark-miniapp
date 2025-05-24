@@ -393,6 +393,7 @@
                 this.tg = window.Telegram?.WebApp;
                 this.user = null;
                 this.backendConnected = false;
+                this.websocket = null;
                 this.init();
             }
 
@@ -412,7 +413,7 @@
                         }
                     }
 
-                    // Connect to backend (your existing Spark AI system)
+                    // Connect to backend
                     await this.connectToBackend();
                     
                     console.log('🚀 BrightSpark AI initialized successfully');
@@ -422,64 +423,97 @@
                 }
             }
 
-         async connectToBackend() {
-    try {
-        console.log('🔌 Connecting to BrightSpark backend...');
-        
-        // Your backend URL
-        const wsUrl = 'wss://1c558653defd-5000.1c558653defd.repl.co/ws';
-        
-        // Create WebSocket connection
-        this.websocket = new WebSocket(wsUrl);
-        
-        // Handle connection opened
-        this.websocket.onopen = () => {
-            console.log('✅ WebSocket connected successfully!');
-            this.backendConnected = true;
-            this.updateStatus('Connected to BrightSpark AI Backend', true);
-            
-            // Send initial session message
-            this.websocket.send(JSON.stringify({
-                type: 'session_init',
-                data: {
-                    user_id: this.user?.id || 'anonymous',
-                    user_name: this.user?.first_name || 'User',
-                    platform: 'telegram_miniapp'
-                },
-                timestamp: Date.now()
-            }));
-        };
-        
-        // Handle messages from backend
-        this.websocket.onmessage = (event) => {
-            try {
-                const message = JSON.parse(event.data);
-                console.log('📨 Received from backend:', message);
-                this.handleBackendMessage(message);
-            } catch (error) {
-                console.error('Failed to parse backend message:', error);
+            async connectToBackend() {
+                try {
+                    console.log('🔌 Connecting to BrightSpark backend...');
+                    
+                    // Your backend URL
+                    const wsUrl = 'wss://1c558653defd-5000.1c558653defd.repl.co/ws';
+                    
+                    // Create WebSocket connection
+                    this.websocket = new WebSocket(wsUrl);
+                    
+                    // Handle connection opened
+                    this.websocket.onopen = () => {
+                        console.log('✅ WebSocket connected successfully!');
+                        this.backendConnected = true;
+                        this.updateStatus('Connected to BrightSpark AI Backend', true);
+                        
+                        // Send initial session message
+                        this.websocket.send(JSON.stringify({
+                            type: 'session_init',
+                            data: {
+                                user_id: this.user?.id || 'anonymous',
+                                user_name: this.user?.first_name || 'User',
+                                platform: 'telegram_miniapp'
+                            },
+                            timestamp: Date.now()
+                        }));
+                    };
+                    
+                    // Handle messages from backend
+                    this.websocket.onmessage = (event) => {
+                        try {
+                            const message = JSON.parse(event.data);
+                            console.log('📨 Received from backend:', message);
+                            this.handleBackendMessage(message);
+                        } catch (error) {
+                            console.error('Failed to parse backend message:', error);
+                        }
+                    };
+                    
+                    // Handle connection closed
+                    this.websocket.onclose = () => {
+                        console.log('🔌 WebSocket disconnected');
+                        this.backendConnected = false;
+                        this.updateStatus('Disconnected - check backend', false);
+                    };
+                    
+                    // Handle connection errors
+                    this.websocket.onerror = (error) => {
+                        console.error('❌ WebSocket error:', error);
+                        this.updateStatus('Connection error - check backend', false);
+                    };
+                    
+                } catch (error) {
+                    console.error('❌ Backend connection failed:', error);
+                    this.updateStatus('Connection failed - backend not available', false);
+                }
             }
-        };
-        
-        // Handle connection closed
-        this.websocket.onclose = () => {
-            console.log('🔌 WebSocket disconnected');
-            this.backendConnected = false;
-            this.updateStatus('Disconnected - check backend', false);
-        };
-        
-        // Handle connection errors
-        this.websocket.onerror = (error) => {
-            console.error('❌ WebSocket error:', error);
-            this.updateStatus('Connection error - check backend', false);
-        };
-        
-    } catch (error) {
-        console.error('❌ Backend connection failed:', error);
-        this.updateStatus('Connection failed - backend not available', false);
-    }
-}
-        
+
+            handleBackendMessage(message) {
+                switch (message.type) {
+                    case 'session_init_response':
+                        console.log('✅ Session initialized:', message.data);
+                        break;
+                        
+                    case 'template_browse_response':
+                        this.showTemplateResults(message.data);
+                        break;
+                        
+                    case 'workflow_analysis_response':
+                        this.showAnalysisResults(message.data);
+                        break;
+                        
+                    case 'error':
+                        console.error('Backend error:', message.data);
+                        this.showError('Backend error: ' + (message.data.message || 'Unknown error'));
+                        break;
+                        
+                    default:
+                        console.log('Unknown message type:', message.type);
+                }
+            }
+
+            sendToBackend(message) {
+                if (this.websocket && this.websocket.readyState === WebSocket.OPEN) {
+                    this.websocket.send(JSON.stringify(message));
+                    console.log('📤 Sent to backend:', message);
+                } else {
+                    console.error('❌ Cannot send - WebSocket not connected');
+                    this.showError('Not connected to backend');
+                }
+            }
 
             updateStatus(message, connected) {
                 const statusText = document.getElementById('status-text');
@@ -498,56 +532,93 @@
             }
 
             async browseTemplates() {
-                this.showLoading(true);
-                
-                try {
-                    // This would connect to your Template Intelligence Engine
-                    console.log('🔍 Browsing templates...');
-                    
-                    // Simulate API call
-                    await new Promise(resolve => setTimeout(resolve, 1500));
-                    
-                    this.showTemplateResults();
-                } catch (error) {
-                    console.error('Template browsing error:', error);
-                } finally {
-                    this.showLoading(false);
+                if (!this.backendConnected) {
+                    this.showError('Not connected to backend');
+                    return;
                 }
+                
+                this.showLoading(true);
+                console.log('🔍 Requesting templates from backend...');
+                
+                this.sendToBackend({
+                    type: 'template_browse_request',
+                    data: {
+                        filters: {
+                            category: 'all',
+                            complexity: 'beginner_to_advanced'
+                        },
+                        limit: 20
+                    },
+                    timestamp: Date.now()
+                });
             }
 
             async analyzeWorkflow() {
-                this.showLoading(true);
+                if (!this.backendConnected) {
+                    this.showError('Not connected to backend');
+                    return;
+                }
                 
-                try {
-                    // This would connect to your Claude AI integration
-                    console.log('🤖 Analyzing workflow with AI...');
+                this.showLoading(true);
+                console.log('🤖 Requesting workflow analysis...');
+                
+                this.sendToBackend({
+                    type: 'workflow_analysis_request',
+                    data: {
+                        analysis_type: 'comprehensive',
+                        workflow_context: 'general_automation'
+                    },
+                    timestamp: Date.now()
+                });
+            }
+
+            showTemplateResults(data) {
+                this.showLoading(false);
+                
+                if (data && data.templates && data.templates.length > 0) {
+                    const count = data.templates.length;
+                    const message = `🎯 Found ${count} real templates!\n\nTop templates:\n` + 
+                        data.templates.slice(0, 3).map(t => `• ${t.name} (${t.category})`).join('\n') +
+                        (count > 3 ? `\n... and ${count - 3} more templates` : '');
                     
-                    // Simulate analysis
-                    await new Promise(resolve => setTimeout(resolve, 2000));
-                    
-                    this.showAnalysisResults();
-                } catch (error) {
-                    console.error('Analysis error:', error);
-                } finally {
-                    this.showLoading(false);
+                    if (this.tg) {
+                        this.tg.showAlert(message);
+                    } else {
+                        alert(message);
+                    }
+                } else {
+                    this.showError('No templates found');
                 }
             }
 
-            showTemplateResults() {
-                // Simulate showing template results
-                if (this.tg) {
-                    this.tg.showAlert('Template Browser: Found 47 automation templates matching your needs!');
+            showAnalysisResults(data) {
+                this.showLoading(false);
+                
+                if (data && data.analysis) {
+                    const message = `🤖 Real AI Analysis Complete!\n\n` +
+                        `Efficiency Score: ${data.analysis.efficiency_score || 'N/A'}%\n` +
+                        `Suggestions: ${data.analysis.suggestions?.length || 0}\n` +
+                        `Issues Found: ${data.analysis.issues?.length || 0}\n` +
+                        `Status: ${data.analysis.status || 'Complete'}`;
+                    
+                    if (this.tg) {
+                        this.tg.showAlert(message);
+                    } else {
+                        alert(message);
+                    }
                 } else {
-                    alert('Template Browser: Found 47 automation templates!');
+                    this.showError('Analysis failed');
                 }
             }
 
-            showAnalysisResults() {
-                // Simulate showing analysis results
+            showError(message) {
+                this.showLoading(false);
+                console.error('Error:', message);
+                
                 if (this.tg) {
-                    this.tg.showAlert('AI Analysis: Your workflow has 85% efficiency score with 3 optimization suggestions.');
+                    this.tg.showAlert(`❌ ${message}`);
                 } else {
-                    alert('AI Analysis complete: 85% efficiency score!');
+                    alert(`Error: ${message}`);
                 }
             }
 
